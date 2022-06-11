@@ -11,8 +11,9 @@
     (players!), create them with factories.
 */
 
-const counterCreator = () => {
-    let count = 0;
+
+const counterCreator = (start = 0) => {
+    let count = start;
 
     const add = () => count++;
     const reset = () => count = 0;
@@ -23,37 +24,37 @@ const counterCreator = () => {
 };
 
 
+
 const gameBoard = (() => {
 
-    const itemSelection = new Array(9);
+    const itemSelection = new Array();
 
     const saveResult = (pos, player) => itemSelection[pos] = player;
     const isEmpty = (pos) => (!itemSelection[pos]);
     const getResult = (pos, sign) => isEmpty(pos) ? saveResult(pos, sign) : console.log('invalid move');
     const get = () => itemSelection;
-    const getField = (pos) => itemSelection[pos];
+    const getPosition = (pos) => itemSelection[pos];
+    const reset = () => itemSelection.length = 0;
 
-    return { getResult, get, getField };
+    return { getResult, get, getPosition, reset };
 })();
-
 
 
 //
 //    PLAYER CREATOR
 //
 
-const Player = (sign) => {
+
+const Player = function(name, sign) {
     const playerSign = sign;
-    
+    const playerName = name;
+
+    const getName = () => playerName;
     const getSign = () => playerSign;
-    const setMove = (pos) => {
-        gameBoard.getResult(pos, sign);
-        controller.pointCounter();
-    };
+    const setMove = (pos) => gameBoard.getResult(pos, sign);
 
-    return Object.assign({}, { getSign, setMove });
+    return Object.assign({}, { getSign, getName, setMove });
 };
-
 
 
 //
@@ -63,90 +64,128 @@ const Player = (sign) => {
 
 const controller = (() => {
     const roundCounter = counterCreator();
-    const firstPlayer = Player('X');
-    const secondPlayer = Player('0');
-    
-    const winnigOptions = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
+    const players = {};
+
+    //
+    // players controllers
+    //
+
+    const createPlayer = (name, sign) => {
+        const newPlayer = Player(name, sign)
+        players[newPlayer.getName()] = newPlayer;
+    };
+    const getPlayers = () => players;
+
+    const selectPlayer = () => {
+        const positionSelected = showPlays();
+
+        if (Object.keys(positionSelected).length === 0) {
+            return players[Object.keys(players)[0]];
+        } else if (positionSelected['X'] <= positionSelected['O']) {
+            return players[Object.keys(players)[0]];
+        } else { return players[Object.keys(players)[1]]; };
+    };
+
+    //
+    // game controllers
+    //
 
     const hasWinner = (counter) => (counter == 3);
     const endGame = (() => console.log('Congrats'));
 
     const pointCounter = () => {
+        const winnigOptions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
         winnigOptions.forEach(el => {
             const counterX = counterCreator();
-            const counter0 = counterCreator();
+            const counterO = counterCreator();
             el.forEach(pos => {
-                if (gameBoard.getField(pos) == "X") {
-                    counterX.add()
-                } else if (gameBoard.getField(pos) == "0") {
-                    counter0.add()
+                if (gameBoard.getPosition(pos) == "X") {
+                    counterX.add();
+                } else if (gameBoard.getPosition(pos) == "O") {
+                    counterO.add();
                 };
             });
 
-            if (hasWinner(counter0.getCounter())) {
-                console.log('Player 0 wins');
+            if (hasWinner(counterO.getCounter())) {
                 endGame();
+                console.log(`Player ${players[Object.keys(players)[1]].getSign()} wins`);
             } else if (hasWinner(counterX.getCounter())) {
-                console.log('Player X wins');
                 endGame();
+                console.log(`Player ${players[Object.keys(players)[0]].getSign()} wins`);
             };
         });
     };
 
-    const showPlays = () => gameBoard.get().reduce((obj, sign) => {
-            if (!obj[sign]) {
-                obj[sign] = 0;
-            }
-            obj[sign]++;
-            return obj;
-        }, {});
-    
-
-    const selectPlayer = () => {
-        const fieldsSelected = showPlays();
-
-        if(Object.keys(fieldsSelected).length === 0){ 
-            return firstPlayer
-        } else if(fieldsSelected['X'] <= fieldsSelected['0']){
-            return firstPlayer
-        } else { return secondPlayer };
+    const reset = () => {
+        roundCounter.reset();
+        gameBoard.reset();
     };
 
+    //
+    // plays controllers
+    //
+
+    const showPlays = () => gameBoard.get().reduce((obj, sign) => {
+        if (!obj[sign]) {
+            obj[sign] = 0;
+        }
+        obj[sign]++;
+        return obj;
+    }, {});
+
     const playMaker = (pos) => {
+        const selectedPlayer = selectPlayer();
+        selectedPlayer.setMove(pos);
+        console.log(selectedPlayer.getSign());
         roundPlay();
-        
-        const player = selectPlayer();
-        player.setMove(pos);
-        console.log(player.getSign())
-    }
+        pointCounter();
+    };
 
     const roundPlay = () => {
-        const fieldsSelected = showPlays();
-        
-        if(Object.keys(fieldsSelected).length === 0){
-            roundCounter.add()
-        }else if(fieldsSelected['X'] <= fieldsSelected['0']){
-            roundCounter.add()
-        }
-        return roundCounter.print()
-    }
+        const positionSelected = showPlays();
 
-    return { pointCounter, playMaker };
+        if (Object.keys(positionSelected).length === 0) {
+            roundCounter.add();
+            roundCounter.print();
+        } else if (positionSelected['X'] <= positionSelected['O']) {
+            roundCounter.add();
+            roundCounter.print();
+        };
+        
+        return 
+    };
+
+    return { 
+        playMaker, 
+        reset,
+        createPlayer,
+        getPlayers
+    };
 })();
+
+controller.createPlayer('Cauê',"X");
+controller.createPlayer('Yano',"O");
+controller.createPlayer('Mari',"A");
+console.log(controller.getPlayers());
 
 controller.playMaker(0);
 controller.playMaker(3);
-controller.playMaker(1);
+controller.playMaker(6);
 controller.playMaker(5);
 controller.playMaker(2);
+controller.playMaker(4);
 
-console.log(gameBoard.get());
+// console.log(gameBoard.get());
+
+// controller.reset();
+// console.log(gameBoard.get());
