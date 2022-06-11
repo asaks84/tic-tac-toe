@@ -9,8 +9,19 @@
     Rule of thumb: if you only ever need ONE of something 
     (gameBoard, displayController), use a module. If you need multiples of something 
     (players!), create them with factories.
- 
- */
+*/
+
+const counterCreator = () => {
+    let count = 0;
+
+    const add = () => count++;
+    const reset = () => count = 0;
+    const print = () => console.log(count);
+    const getCounter = () => count;
+
+    return { add, reset, print, getCounter };
+};
+
 
 const gameBoard = (() => {
 
@@ -20,23 +31,41 @@ const gameBoard = (() => {
     const isEmpty = (pos) => (!itemSelection[pos]);
     const getResult = (pos, sign) => isEmpty(pos) ? saveResult(pos, sign) : console.log('invalid move');
     const get = () => itemSelection;
-    const getPos = (pos) => itemSelection[pos];
+    const getField = (pos) => itemSelection[pos];
 
-    return { getResult, get, getPos };
+    return { getResult, get, getField };
 })();
+
+
+
+//
+//    PLAYER CREATOR
+//
 
 const Player = (sign) => {
     const playerSign = sign;
+    
+    const getSign = () => playerSign;
     const setMove = (pos) => {
         gameBoard.getResult(pos, sign);
-        gameController.pointCounter();
+        controller.pointCounter();
     };
-    const getSign = () => playerSign;
 
-    return Object.assign({}, {getSign, setMove});
+    return Object.assign({}, { getSign, setMove });
 };
 
-const gameController = (() => {
+
+
+//
+//  GAME CONTROLLER
+//
+
+
+const controller = (() => {
+    const roundCounter = counterCreator();
+    const firstPlayer = Player('X');
+    const secondPlayer = Player('0');
+    
     const winnigOptions = [
         [0, 1, 2],
         [3, 4, 5],
@@ -49,43 +78,75 @@ const gameController = (() => {
     ];
 
     const hasWinner = (counter) => (counter == 3);
-    const endGame = ( () => console.log('Congrats'))
+    const endGame = (() => console.log('Congrats'));
 
-    const pointCounter = () =>{
+    const pointCounter = () => {
         winnigOptions.forEach(el => {
-            let counterX = 0;
-            let counter0 = 0;
-            
+            const counterX = counterCreator();
+            const counter0 = counterCreator();
             el.forEach(pos => {
-                if (gameBoard.getPos(pos) == "X") {
-                    ++counterX
-                } else if (gameBoard.getPos(pos) == "0") {
-                    ++counter0
+                if (gameBoard.getField(pos) == "X") {
+                    counterX.add()
+                } else if (gameBoard.getField(pos) == "0") {
+                    counter0.add()
                 };
             });
 
-            if(hasWinner(counter0)){
+            if (hasWinner(counter0.getCounter())) {
                 console.log('Player 0 wins');
                 endGame();
-            } else if (hasWinner(counterX)){
-                console.log('Player X wins')
+            } else if (hasWinner(counterX.getCounter())) {
+                console.log('Player X wins');
                 endGame();
             };
         });
-    };    
-    return { pointCounter };
+    };
+
+    const showPlays = () => gameBoard.get().reduce((obj, sign) => {
+            if (!obj[sign]) {
+                obj[sign] = 0;
+            }
+            obj[sign]++;
+            return obj;
+        }, {});
+    
+
+    const selectPlayer = () => {
+        const fieldsSelected = showPlays();
+
+        if(Object.keys(fieldsSelected).length === 0){ 
+            return firstPlayer
+        } else if(fieldsSelected['X'] <= fieldsSelected['0']){
+            return firstPlayer
+        } else { return secondPlayer };
+    };
+
+    const playMaker = (pos) => {
+        roundPlay();
+        
+        const player = selectPlayer();
+        player.setMove(pos);
+        console.log(player.getSign())
+    }
+
+    const roundPlay = () => {
+        const fieldsSelected = showPlays();
+        
+        if(Object.keys(fieldsSelected).length === 0){
+            roundCounter.add()
+        }else if(fieldsSelected['X'] <= fieldsSelected['0']){
+            roundCounter.add()
+        }
+        return roundCounter.print()
+    }
+
+    return { pointCounter, playMaker };
 })();
 
+controller.playMaker(0);
+controller.playMaker(3);
+controller.playMaker(1);
+controller.playMaker(5);
+controller.playMaker(2);
 
-const firstPlayer = Player('X');
-const secondPlayer = Player('0');
-
-firstPlayer.setMove(0);
-secondPlayer.setMove(2);
-firstPlayer.setMove(1);
-secondPlayer.setMove(4);
-firstPlayer.setMove(3);
-secondPlayer.setMove(6);
-
-
-//console.log(gameBoard.get());
+console.log(gameBoard.get());
