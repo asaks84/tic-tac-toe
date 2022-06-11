@@ -63,7 +63,9 @@ const Player = function(name, sign) {
 
 
 const controller = (() => {
-    const roundCounter = counterCreator();
+    let lastRound = 0;
+
+    const roundCounter = counterCreator(1);
     const players = {};
 
     //
@@ -75,6 +77,7 @@ const controller = (() => {
         players[newPlayer.getName()] = newPlayer;
     };
     const getPlayers = () => players;
+    const getPlayer = (pos) => players[Object.keys(players)[pos]]
 
     const selectPlayer = () => {
         const positionSelected = showPlays();
@@ -109,7 +112,7 @@ const controller = (() => {
             const counterX = counterCreator();
             const counterO = counterCreator();
             el.forEach(pos => {
-                if (gameBoard.getPosition(pos) == "X") {
+               if (gameBoard.getPosition(pos) == 'X') {
                     counterX.add();
                 } else if (gameBoard.getPosition(pos) == "O") {
                     counterO.add();
@@ -118,10 +121,10 @@ const controller = (() => {
 
             if (hasWinner(counterO.getCounter())) {
                 endGame();
-                console.log(`Player ${players[Object.keys(players)[1]].getSign()} wins`);
+                console.log(`Player ${getPlayer(1).getSign()} wins`);
             } else if (hasWinner(counterX.getCounter())) {
                 endGame();
-                console.log(`Player ${players[Object.keys(players)[0]].getSign()} wins`);
+                console.log(`Player ${getPlayer(0).getSign()} wins`);
             };
         });
     };
@@ -144,9 +147,15 @@ const controller = (() => {
     }, {});
 
     const playMaker = (pos) => {
+        
+        if ( lastRound != roundCounter.getCounter()) {
+            roundCounter.print();
+        };
+
         const selectedPlayer = selectPlayer();
         selectedPlayer.setMove(pos);
         console.log(selectedPlayer.getSign());
+        lastRound = roundCounter.getCounter();
         roundPlay();
         pointCounter();
     };
@@ -154,12 +163,8 @@ const controller = (() => {
     const roundPlay = () => {
         const positionSelected = showPlays();
 
-        if (Object.keys(positionSelected).length === 0) {
+        if (positionSelected['X'] <= positionSelected['O']) {
             roundCounter.add();
-            roundCounter.print();
-        } else if (positionSelected['X'] <= positionSelected['O']) {
-            roundCounter.add();
-            roundCounter.print();
         };
         
         return 
@@ -173,10 +178,9 @@ const controller = (() => {
     };
 })();
 
-controller.createPlayer('Cauê',"X");
-controller.createPlayer('Yano',"O");
-controller.createPlayer('Mari',"A");
-console.log(controller.getPlayers());
+controller.createPlayer('P1',"X");
+controller.createPlayer('P2',"O");
+// console.log(controller.getPlayers());
 
 controller.playMaker(0);
 controller.playMaker(3);
