@@ -88,11 +88,11 @@ const controller = (() => {
     const getPlayer = (pos) => players[Object.keys(players)[pos]]
 
     const selectPlayer = () => {
-        const positionSelected = showPlays();
+        const numberOfMoves = showPlays();
 
-        if (Object.keys(positionSelected).length === 0) {
+        if (Object.keys(numberOfMoves).length === 0) {
             return players[Object.keys(players)[0]];
-        } else if (positionSelected['X'] <= positionSelected['O']) {
+        } else if (numberOfMoves['X'] <= numberOfMoves['O']) {
             return players[Object.keys(players)[0]];
         } else { return players[Object.keys(players)[1]]; };
     };
@@ -169,9 +169,9 @@ const controller = (() => {
     };
 
     const roundPlay = () => {
-        const positionSelected = showPlays();
+        const numberOfMoves = showPlays();
 
-        if (positionSelected['X'] <= positionSelected['O']) {
+        if (numberOfMoves['X'] <= numberOfMoves['O']) {
             roundCounter.add();
         };
         
