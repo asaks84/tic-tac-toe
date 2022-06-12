@@ -72,8 +72,8 @@ const Player = function(name, sign) {
 
 const controller = (() => {
     let lastRound = 0;
-
     const roundCounter = counterCreator(1);
+
     const players = {};
 
     //
@@ -97,12 +97,17 @@ const controller = (() => {
         } else { return getPlayer(1); };
     };
 
+    const playerCounter = () => Object.keys(players).length;
+
     //
     // game controllers
     //
 
     const hasWinner = (counter) => (counter == 3);
-    const endGame = (() => console.log('Congrats'));
+    const endGame = (name) => {
+        console.log(`Player ${name.getSign()} wins`);
+        console.log('Congrats');
+    }
 
     const pointCounter = () => {
         const winnigOptions = [
@@ -115,26 +120,36 @@ const controller = (() => {
             [0, 4, 8],
             [2, 4, 6]
         ];
+        const numberOfPlayers = playerCounter();
 
-        winnigOptions.forEach(el => {
-            const counterX = counterCreator();
-            const counterO = counterCreator();
-            el.forEach(pos => {
-               if (gameBoard.getPosition(pos) == 'X') {
-                    counterX.add();
-                } else if (gameBoard.getPosition(pos) == "O") {
-                    counterO.add();
+        // Replacing last solution with forEach(), 
+        // only because it was unstoppable!
+        // The forEach solution is on the commit before this one 
+        // "replacing forEach solution for pointCounter()"
+        // And for practicing new possibilities.
+
+        playerLoop:
+        for (i = 0; i < numberOfPlayers; i++){
+            const playerPoints = counterCreator();
+
+            combinationPossibilities:
+            for (winninglength = 0; winninglength < winnigOptions.length; winninglength++) {
+                const winnigElement = winnigOptions[winninglength]; 
+
+                eachPositionLoop:
+                for (eachPos = 0; eachPos < winnigElement.length; eachPos++) {
+                    const pos = winnigElement[eachPos];
+                    if (gameBoard.getPosition(pos) == getPlayer(i).getSign()) {
+                        playerPoints.add();
+                    };
+                    if (hasWinner(playerPoints.getCounter())) {
+                        endGame(getPlayer(i));
+                        break playerLoop;
+                    };
                 };
-            });
-
-            if (hasWinner(counterO.getCounter())) {
-                endGame();
-                console.log(`Player ${getPlayer(1).getSign()} wins`);
-            } else if (hasWinner(counterX.getCounter())) {
-                endGame();
-                console.log(`Player ${getPlayer(0).getSign()} wins`);
+                playerPoints.reset();
             };
-        });
+        };
     };
 
     const reset = () => {
@@ -146,7 +161,7 @@ const controller = (() => {
     //
     // plays controllers
     //
-
+    
     const showPlays = () => gameBoard.get().reduce((obj, sign) => {
         if (!obj[sign]) {
             obj[sign] = 0;
@@ -171,11 +186,9 @@ const controller = (() => {
     const roundPlay = () => {
         const numberOfMoves = showPlays();
 
-        if (numberOfMoves['X'] <= numberOfMoves['O']) {
+        if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
             roundCounter.add();
         };
-        
-        return 
     };
 
     return { 
@@ -186,13 +199,11 @@ const controller = (() => {
     };
 })();
 
-
 // it's just for test =)
-(function(){
-    controller.createPlayer('P1',"X");
-    controller.createPlayer('P2',"O");
-    // console.log(controller.getPlayers());
-    
+(function () {
+    controller.createPlayer('P1', "X");
+    controller.createPlayer('P2', "O");
+
     controller.play(0);
     controller.play(3);
     controller.play(6);
@@ -201,6 +212,7 @@ const controller = (() => {
     controller.play(2);
     controller.play(4);
     
+
     console.log(gameBoard.get());
 })();
 
