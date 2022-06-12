@@ -17,12 +17,10 @@ const counterCreator = (start = 0) => {
 
     const add = () => count++;
     const reset = () => count = 0;
-    const print = () => console.log(count);
     const getCounter = () => count;
 
-    return { add, reset, print, getCounter };
+    return { add, reset, getCounter };
 };
-
 
 
 const gameBoard = (() => {
@@ -31,12 +29,13 @@ const gameBoard = (() => {
 
     const saveResult = (pos, player) => itemSelection[pos] = player;
     const isEmpty = (pos) => (!itemSelection[pos]);
-    const setResult = (pos, sign) => {
+    const setResult = (pos, sign, name) => {
+
         if(isEmpty(pos)){
             saveResult(pos, sign);
             console.log(sign + " = " + pos );
         } else {
-            console.error(`invalid move! (${sign} = ${pos})`);
+            console.error(`${name}, this move is impossible! (${sign} = ${pos})`);
         }
           
     } 
@@ -48,9 +47,6 @@ const gameBoard = (() => {
 })();
 
 
-//
-//    PLAYER CREATOR
-//
 
 
 const Player = function(name, sign) {
@@ -59,7 +55,7 @@ const Player = function(name, sign) {
 
     const getName = () => playerName;
     const getSign = () => playerSign;
-    const setMove = (pos) => gameBoard.setResult(pos, sign);
+    const setMove = (pos) => gameBoard.setResult(pos, sign, getName());
 
     return Object.assign({}, { getSign, getName, setMove });
 };
@@ -84,11 +80,12 @@ const controller = (() => {
         const newPlayer = Player(name, sign)
         players[newPlayer.getName()] = newPlayer;
     };
+
     const getPlayers = () => players;
-    const getPlayer = (pos) => players[Object.keys(players)[pos]]
+    const getPlayer = (pos) => players[Object.keys(players)[pos]];
 
     const selectPlayer = () => {
-        const numberOfMoves = showPlays();
+        const numberOfMoves = getAmountOfPlays();
 
         if (Object.keys(numberOfMoves).length === 0) {
             return getPlayer(0);
@@ -104,10 +101,7 @@ const controller = (() => {
     //
 
     const hasWinner = (counter) => (counter == 3);
-    const endGame = (name) => {
-        console.log(`Player ${name.getSign()} wins`);
-        console.log('Congrats');
-    }
+    const endGame = (player) => console.log(`${player.getName()} wins!\nCongrats!`);
 
     const pointCounter = () => {
         const winnigOptions = [
@@ -121,16 +115,19 @@ const controller = (() => {
             [2, 4, 6]
         ];
         const numberOfPlayers = playerCounter();
+        const playerPoints = counterCreator();
 
-        // Replacing last solution with forEach(), 
-        // only because it was unstoppable!
-        // The forEach solution is on the commit before this one 
-        // "replacing forEach solution for pointCounter()"
-        // And for practicing new possibilities.
-
+        /*
+            Replacing last solution with forEach(), 
+            only because it was unstoppable! 
+            Also now I can use it for all players.
+            
+            The forEach solution is on the commit before this one 
+            "replacing forEach solution for pointCounter()"
+        */
+        
         playerLoop:
         for (i = 0; i < numberOfPlayers; i++){
-            const playerPoints = counterCreator();
 
             combinationPossibilities:
             for (winninglength = 0; winninglength < winnigOptions.length; winninglength++) {
@@ -162,7 +159,7 @@ const controller = (() => {
     // plays controllers
     //
     
-    const showPlays = () => gameBoard.get().reduce((obj, sign) => {
+    const getAmountOfPlays = () => gameBoard.get().reduce((obj, sign) => {
         if (!obj[sign]) {
             obj[sign] = 0;
         }
@@ -173,7 +170,7 @@ const controller = (() => {
     const play = (pos) => {
         
         if ( lastRound != roundCounter.getCounter()) {
-            roundCounter.print();
+            console.log(roundCounter.getCounter());
         };
 
         const selectedPlayer = selectPlayer();
@@ -184,7 +181,7 @@ const controller = (() => {
     };
 
     const roundPlay = () => {
-        const numberOfMoves = showPlays();
+        const numberOfMoves = getAmountOfPlays();
 
         if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
             roundCounter.add();
@@ -212,7 +209,6 @@ const controller = (() => {
     controller.play(2);
     controller.play(4);
     
-
     console.log(gameBoard.get());
 })();
 
