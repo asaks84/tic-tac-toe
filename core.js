@@ -91,10 +91,10 @@ const controller = (() => {
         const numberOfMoves = showPlays();
 
         if (Object.keys(numberOfMoves).length === 0) {
-            return players[Object.keys(players)[0]];
-        } else if (numberOfMoves['X'] <= numberOfMoves['O']) {
-            return players[Object.keys(players)[0]];
-        } else { return players[Object.keys(players)[1]]; };
+            return getPlayer(0);
+        } else if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
+            return getPlayer(0);
+        } else { return getPlayer(1); };
     };
 
     //
@@ -155,7 +155,7 @@ const controller = (() => {
         return obj;
     }, {});
 
-    const playMaker = (pos) => {
+    const play = (pos) => {
         
         if ( lastRound != roundCounter.getCounter()) {
             roundCounter.print();
@@ -179,7 +179,7 @@ const controller = (() => {
     };
 
     return { 
-        playMaker, 
+        play, 
         reset,
         createPlayer,
         getPlayers
@@ -193,14 +193,13 @@ const controller = (() => {
     controller.createPlayer('P2',"O");
     // console.log(controller.getPlayers());
     
-    controller.playMaker(0);
-    controller.playMaker(3);
-    controller.playMaker(6);
-    controller.playMaker(5);
-    controller.playMaker(2);
-    controller.playMaker(2);
-    controller.playMaker(4);
-    
+    controller.play(0);
+    controller.play(3);
+    controller.play(6);
+    controller.play(5);
+    controller.play(2);
+    controller.play(2);
+    controller.play(4);
     
     console.log(gameBoard.get());
 })();
