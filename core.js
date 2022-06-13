@@ -1,4 +1,9 @@
 /*
+   WHY WHEN I USE MODULES, I CAN'T EXPORT CONTROLLER TO script.js? 
+   THIS STOP THE DOM ELEMENTS TO WORK
+*/
+
+/*
     You’re going to store the gameboard as an array inside of a Gameboard object, 
     so start there! Your players are also going to be stored in objects… and you’re probably 
     going to want an object to control the flow of the game itself.
@@ -26,19 +31,20 @@ const counterCreator = (start = 0) => {
 const gameBoard = (() => {
 
     const boardField = new Array();
-    
+
     const saveResult = (pos, player) => boardField[pos] = player;
     const isEmpty = (pos) => (!boardField[pos]);
     const setResult = (pos, sign, name) => {
 
-        if(isEmpty(pos)){
+        if (isEmpty(pos)) {
             saveResult(pos, sign);
-            console.log(sign + " = " + pos );
+            console.log(sign + " = " + pos);
         } else {
             console.error(`${name}, this move is impossible! (${sign} = ${pos})`);
+            return
         }
-          
-    } 
+
+    }
     const get = () => boardField;
     const getPosition = (pos) => boardField[pos];
     const reset = () => boardField.length = 0;
@@ -49,7 +55,7 @@ const gameBoard = (() => {
 
 
 
-const Player = function(name, sign) {
+const Player = function (name, sign) {
     const playerSign = sign;
     const playerName = name;
 
@@ -72,7 +78,7 @@ const controller = (() => {
     const turnCounter = counterCreator(1);
     const playerRotation = counterCreator();
     const onOff = counterCreator();
-    const roundCounter = counterCreator(1);
+    // const roundCounter = counterCreator(1);
 
     const players = [];
 
@@ -88,27 +94,15 @@ const controller = (() => {
     const getPlayer = (pos) => players[pos];
 
     const getPlayerToMove = () => {
-        const player = getPlayer(playerRotation.getCounter());
-        if(playerRotation.getCounter() < players.length){
-            playerRotation.add();
-            
-        }
-        if(playerRotation.getCounter() >= players.length){
-            playerRotation.reset();
-        }
-        return player;
-        /*
-            old way to do the same thing
-            but setting manually max players im the game
-            not a problem for this game
+        const numberOfMoves = getAmountOfPlays();
+        
+        
+        if (Object.keys(numberOfMoves).length === 0) {
+            return getPlayer(0);
+        } else if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
+            return getPlayer(0);
+        } else { return getPlayer(1); };
 
-            const numberOfMoves = getAmountOfPlays();
-            if (Object.keys(numberOfMoves).length === 0) {
-                return getPlayer(0);
-            } else if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
-                return getPlayer(0);
-            } else { return getPlayer(1); };
-        */
     };
 
     const getAmountOfPlayers = () => players.length;
@@ -123,7 +117,7 @@ const controller = (() => {
         onOff.add()
     };
 
-    const pointCounter = () => {
+    const veifyResult = () => {
         const winnigOptions = [
             [0, 1, 2],
             [3, 4, 5],
@@ -143,15 +137,15 @@ const controller = (() => {
             Also now I can use it for all players.
             
             The forEach solution is on the commit before this one 
-            "replacing forEach solution for pointCounter()"
+            "replacing forEach solution for veifyResult()"
         */
-        
+
         playerLoop:
-        for (i = 0; i < numberOfPlayers; i++){
+        for (i = 0; i < numberOfPlayers; i++) {
 
             combinationPossibilities:
             for (winninglength = 0; winninglength < winnigOptions.length; winninglength++) {
-                const winnigElement = winnigOptions[winninglength]; 
+                const winnigElement = winnigOptions[winninglength];
 
                 eachPositionLoop:
                 for (eachPos = 0; eachPos < winnigElement.length; eachPos++) {
@@ -179,7 +173,7 @@ const controller = (() => {
     //
     // plays controllers
     //
-    
+
     const getAmountOfPlays = () => gameBoard.get().reduce((obj, sign) => {
         if (!obj[sign]) {
             obj[sign] = 0;
@@ -188,37 +182,43 @@ const controller = (() => {
         return obj;
     }, {});
 
+
     const play = (pos) => {
 
-        if(onOff.getCounter() > 0){
+        if (onOff.getCounter() > 0) {
             console.log("The game is Over");
             return
         }
-        
-        if ( allPlayersPhase != turnCounter.getCounter()) {
+
+        if (allPlayersPhase != turnCounter.getCounter()) {
             console.log(turnCounter.getCounter());
         };
 
         getPlayerToMove().setMove(pos);
         allPlayersPhase = turnCounter.getCounter();
-        isAllPlayersPlayed();
-        pointCounter();
+        if (isAllPlayersPlayed()) {
+            turnCounter.add();
+        }
+
+
+        veifyResult();
     };
 
     const isAllPlayersPlayed = () => {
         const numberOfMoves = getAmountOfPlays();
 
-        if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers()-1).getSign()]) {
-            turnCounter.add();
-        };
+        return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()])
     };
-    
-    return { 
-        play, 
+
+    return {
+        players,
+        play,
         reset,
         createPlayer
     };
 })();
+
+
 
 // it's just for test =)
 (function () {
@@ -226,12 +226,13 @@ const controller = (() => {
     controller.createPlayer('P2', "O");
 
     controller.play(0);
+    controller.play(0);
     controller.play(3);
-    controller.play(6);
     controller.play(5);
+    controller.play(6);
     controller.play(2);
     controller.play(2);
     controller.play(4);
-    
+
     console.log(gameBoard.get());
 })();

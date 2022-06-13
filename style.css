@@ -1,6 +1,7 @@
-@import url("./node_modules/@mdi/font/css/materialdesignicons.min.css");
+@import url("./font/css/materialdesignicons.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Questrial&display=swap");
 @import url("https://fonts.googleapis.com/css?family=Fredoka+One");
+@import url("./font/fonts/materialdesignicons-webfont.woff2");
 @import url("./normalize.css");
 :root {
   --font-family: "Questrial", sans-serif;
@@ -46,6 +47,13 @@ body {
   padding: 7px 25px;
   text-decoration: none;
   text-shadow: 0px 1px 0px #e1e2ed;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .btn:hover {
@@ -67,12 +75,34 @@ body {
 
 header {
   margin-bottom: auto;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 footer {
   margin-top: auto;
   font-size: 0.8rem;
   text-align: center;
+}
+footer > .credits > p:nth-child(2):before {
+  font-family: "Material Design Icons";
+  font-size: 1.1rem !important;
+  content: "\f02a4";
+  position: relative;
+  top: 2px;
+  right: 2px;
+}
+footer > .disclaimer {
+  font-size: 0.8rem;
+}
+footer > .disclaimer::before {
+  font-family: "Material Design Icons";
+  font-size: 1.2rem !important;
+  content: "\f071f";
+  position: relative;
+  top: 2.5px;
+  right: 2px;
 }
 
 main {
@@ -97,6 +127,9 @@ main aside .control {
 }
 main aside .control button {
   width: 88px;
+}
+main aside .control button:active {
+  outline: none;
 }
 @media (max-width: 599px) {
   main {
