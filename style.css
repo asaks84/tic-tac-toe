@@ -1,3 +1,132 @@
+@import url("./node_modules/@mdi/font/css/materialdesignicons.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Questrial&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Fredoka+One");
+@import url("./normalize.css");
+:root {
+  --font-family: "Questrial", sans-serif;
+  --font-size: 16px;
+  --line-height: .3rem;
+  --sign-font: "Fredoka One", cursive;
+}
 
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-size: var(--font-size);
+  font-family: var(--font-family);
+  height: 100%;
+  min-height: 100%;
+  background-color: var(--background-color);
+  line-height: var(--line-height);
+}
+
+.flex {
+  display: flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.btn {
+  box-shadow: 2px 3px 0px 0px #61615d;
+  background: linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);
+  background-color: #ededed;
+  border-radius: 15px;
+  border: 1px solid #444444;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: bold;
+  color: #3d3d3d;
+  padding: 7px 25px;
+  text-decoration: none;
+  text-shadow: 0px 1px 0px #e1e2ed;
+}
+
+.btn:hover {
+  background: linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);
+  background-color: #bab1ba;
+}
+
+.btn:active {
+  position: relative;
+  top: 1px;
+}
+
+#wrapper {
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+header {
+  margin-bottom: auto;
+}
+
+footer {
+  margin-top: auto;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+main {
+  gap: 20px;
+}
+main aside {
+  min-width: 20vw;
+}
+@media (max-width: 599px) {
+  main aside {
+    text-align: center;
+  }
+}
+main aside .control {
+  flex-direction: column;
+  gap: 10px;
+}
+@media (max-width: 599px) {
+  main aside .control {
+    flex-direction: row;
+  }
+}
+main aside .control button {
+  width: 88px;
+}
+@media (max-width: 599px) {
+  main {
+    flex-wrap: wrap-reverse;
+    justify-content: center;
+  }
+}
+main section {
+  text-align: center;
+}
+main section .screen {
+  justify-content: center;
+  width: 320px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+main section .screen > div {
+  justify-content: center;
+  align-items: center;
+  font-family: var(--sign-font);
+  font-size: 4rem;
+  color: rgba(0, 0, 0, 0.6);
+  width: 100px;
+  height: 100px;
+  background: #6e6e6e;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 0px 16px -2px rgba(0, 0, 0, 0.322);
+  box-shadow: 0px 0px 16px -2px rgba(0, 0, 0, 0.322);
+  text-shadow: 3px 2px 3px rgba(255, 255, 255, 0.2);
+  border: 1px solid #d3bfbf;
+}
 
 /*# sourceMappingURL=style.css.map */

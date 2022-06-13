@@ -11,48 +11,50 @@
 </head>
 
 <body>
-    <div class="wrapper">
+    <div id="wrapper" class="flex">
 
-        <header>
+        <header class="flex">
             <div class="logo">
-                <h1>Logo</h1>
+                <h1># tic tac toe #</h1>
             </div>
         </header>
 
-        <main>
+        <main class="flex">
 
             <aside>
-                <div class="control">
+                <div>
+                    <h4>controls</h4>
+                </div>
+                <div class="control flex">
                     <div>
-                        <h4>Play</h4>
-                        <button class="start">Start</button>
+                        <button class="btn">Start</button>
                     </div>
                     <div>
-                        <h4>Reset</h4>
-                        <button class="start">Reset</button>
+                        <button class="btn">Reset</button>
                     </div>
                 </div>
             </aside>
 
             <section>
 
-                <h2>Round Play</h2>
-                <p>Round: 1</p>
+                <!-- <h2>Best of <span id="numberOfRounds">3</span> rounds</h2> -->
+                <h2></h2>
+                <p><strong>Turn:</strong> 1</p>
                 <div class="players">
                     <div class="player"></div>
                     <div class="player"></div>
                 </div>
 
-                <div class="screen">
-                    <div data-field="0"></div>
-                    <div data-field="1"></div>
-                    <div data-field="2"></div>
-                    <div data-field="3"></div>
-                    <div data-field="4"></div>
-                    <div data-field="5"></div>
-                    <div data-field="6"></div>
-                    <div data-field="7"></div>
-                    <div data-field="8"></div>
+                <div class="screen flex">
+                    <div class="flex" data-field="0">X</div>
+                    <div class="flex" data-field="1">O</div>
+                    <div class="flex" data-field="2"></div>
+                    <div class="flex" data-field="3"></div>
+                    <div class="flex" data-field="4"></div>
+                    <div class="flex" data-field="5"></div>
+                    <div class="flex" data-field="6"></div>
+                    <div class="flex" data-field="7"></div>
+                    <div class="flex" data-field="8"></div>
                 </div>
 
             </section>
@@ -62,8 +64,7 @@
         <footer>
             <div class="credits">
                 <p>This game is part of a JavaScript coding program by <a href="http://theodinproject.com" target="_blank">theOdinProject</a>.</p>
-                <p><a href="https://github.com/asaks84/tic-tac-toe" target="_blank"></a>Repository here</a>.</p>
-                <p>Developed by <a href="https://github.com/asaks84">@asak84</a>.</p>
+                <p><i class="mdi mdi-github"></i> <a href="https://github.com/asaks84/tic-tac-toe" target="_blank">Repository here</a>. Developed by <a href="https://github.com/asaks84">@asak84</a>.</p>
             </div>
         </footer>
 

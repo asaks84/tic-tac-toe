@@ -67,10 +67,12 @@ const Player = function(name, sign) {
 
 
 const controller = (() => {
-    let lastRound = 0;
-    const roundCounter = counterCreator(1);
-    const playerCounter = counterCreator();
+    let allPlayersPhase = 0;
+
+    const turnCounter = counterCreator(1);
+    const playerRotation = counterCreator();
     const onOff = counterCreator();
+    const roundCounter = counterCreator(1);
 
     const players = [];
 
@@ -83,32 +85,30 @@ const controller = (() => {
         players.push(newPlayer);
     };
 
-    const getPlayers = () => players;
     const getPlayer = (pos) => players[pos];
 
     const getPlayerToMove = () => {
-        if(playerCounter.getCounter() >= players.length){
-            playerCounter.reset();
+        const player = getPlayer(playerRotation.getCounter());
+        if(playerRotation.getCounter() < players.length){
+            playerRotation.add();
+            
         }
-        if(playerCounter.getCounter() < players.length){
-            const player = getPlayer(playerCounter.getCounter());
-            playerCounter.add();
-            return player;
+        if(playerRotation.getCounter() >= players.length){
+            playerRotation.reset();
         }
-        
+        return player;
         /*
             old way to do the same thing
             but setting manually max players im the game
             not a problem for this game
+
+            const numberOfMoves = getAmountOfPlays();
+            if (Object.keys(numberOfMoves).length === 0) {
+                return getPlayer(0);
+            } else if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
+                return getPlayer(0);
+            } else { return getPlayer(1); };
         */
-
-        // const numberOfMoves = getAmountOfPlays();
-
-        // if (Object.keys(numberOfMoves).length === 0) {
-        //     return getPlayer(0);
-        // } else if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
-        //     return getPlayer(0);
-        // } else { return getPlayer(1); };
     };
 
     const getAmountOfPlayers = () => players.length;
@@ -170,9 +170,9 @@ const controller = (() => {
     };
 
     const reset = () => {
-        roundCounter.reset();
+        turnCounter.reset();
         gameBoard.reset();
-        lastRound = 0;
+        allPlayersPhase = 0;
         onOff.reset()
     };
 
@@ -195,29 +195,28 @@ const controller = (() => {
             return
         }
         
-        if ( lastRound != roundCounter.getCounter()) {
-            console.log(roundCounter.getCounter());
+        if ( allPlayersPhase != turnCounter.getCounter()) {
+            console.log(turnCounter.getCounter());
         };
 
         getPlayerToMove().setMove(pos);
-        lastRound = roundCounter.getCounter();
-        roundPlay();
+        allPlayersPhase = turnCounter.getCounter();
+        isAllPlayersPlayed();
         pointCounter();
     };
 
-    const roundPlay = () => {
+    const isAllPlayersPlayed = () => {
         const numberOfMoves = getAmountOfPlays();
 
-        if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
-            roundCounter.add();
+        if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers()-1).getSign()]) {
+            turnCounter.add();
         };
     };
-
+    
     return { 
         play, 
         reset,
-        createPlayer,
-        getPlayers
+        createPlayer
     };
 })();
 
@@ -233,7 +232,6 @@ const controller = (() => {
     controller.play(2);
     controller.play(2);
     controller.play(4);
-    controller.play(4);
     
-    // console.log(gameBoard.get());
+    console.log(gameBoard.get());
 })();
