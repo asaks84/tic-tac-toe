@@ -11,12 +11,12 @@
     (players!), create them with factories.
 */
 
-
 const counterCreator = (start = 0) => {
+    const firstNum = start;
     let count = start;
 
     const add = () => count++;
-    const reset = () => count = 0;
+    const reset = () => count = Number(firstNum);
     const getCounter = () => count;
 
     return { add, reset, getCounter };
@@ -25,10 +25,10 @@ const counterCreator = (start = 0) => {
 
 const gameBoard = (() => {
 
-    const itemSelection = new Array();
-
-    const saveResult = (pos, player) => itemSelection[pos] = player;
-    const isEmpty = (pos) => (!itemSelection[pos]);
+    const boardField = new Array();
+    
+    const saveResult = (pos, player) => boardField[pos] = player;
+    const isEmpty = (pos) => (!boardField[pos]);
     const setResult = (pos, sign, name) => {
 
         if(isEmpty(pos)){
@@ -39,9 +39,9 @@ const gameBoard = (() => {
         }
           
     } 
-    const get = () => itemSelection;
-    const getPosition = (pos) => itemSelection[pos];
-    const reset = () => itemSelection.length = 0;
+    const get = () => boardField;
+    const getPosition = (pos) => boardField[pos];
+    const reset = () => boardField.length = 0;
 
     return { setResult, get, getPosition, reset };
 })();
@@ -69,8 +69,10 @@ const Player = function(name, sign) {
 const controller = (() => {
     let lastRound = 0;
     const roundCounter = counterCreator(1);
+    const playerCounter = counterCreator();
+    const onOff = counterCreator();
 
-    const players = {};
+    const players = [];
 
     //
     // players controllers
@@ -78,30 +80,48 @@ const controller = (() => {
 
     const createPlayer = (name, sign) => {
         const newPlayer = Player(name, sign)
-        players[newPlayer.getName()] = newPlayer;
+        players.push(newPlayer);
     };
 
     const getPlayers = () => players;
-    const getPlayer = (pos) => players[Object.keys(players)[pos]];
+    const getPlayer = (pos) => players[pos];
 
-    const selectPlayer = () => {
-        const numberOfMoves = getAmountOfPlays();
+    const getPlayerToMove = () => {
+        if(playerCounter.getCounter() >= players.length){
+            playerCounter.reset();
+        }
+        if(playerCounter.getCounter() < players.length){
+            const player = getPlayer(playerCounter.getCounter());
+            playerCounter.add();
+            return player;
+        }
+        
+        /*
+            old way to do the same thing
+            but setting manually max players im the game
+            not a problem for this game
+        */
 
-        if (Object.keys(numberOfMoves).length === 0) {
-            return getPlayer(0);
-        } else if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
-            return getPlayer(0);
-        } else { return getPlayer(1); };
+        // const numberOfMoves = getAmountOfPlays();
+
+        // if (Object.keys(numberOfMoves).length === 0) {
+        //     return getPlayer(0);
+        // } else if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
+        //     return getPlayer(0);
+        // } else { return getPlayer(1); };
     };
 
-    const playerCounter = () => Object.keys(players).length;
+    const getAmountOfPlayers = () => players.length;
 
     //
     // game controllers
     //
 
     const hasWinner = (counter) => (counter == 3);
-    const endGame = (player) => console.log(`${player.getName()} wins!\nCongrats!`);
+    const endGame = (player) => {
+        console.log(`${player.getName()} wins!\nCongrats!`)
+        onOff.add()
+    };
 
     const pointCounter = () => {
         const winnigOptions = [
@@ -114,7 +134,7 @@ const controller = (() => {
             [0, 4, 8],
             [2, 4, 6]
         ];
-        const numberOfPlayers = playerCounter();
+        const numberOfPlayers = getAmountOfPlayers();
         const playerPoints = counterCreator();
 
         /*
@@ -153,6 +173,7 @@ const controller = (() => {
         roundCounter.reset();
         gameBoard.reset();
         lastRound = 0;
+        onOff.reset()
     };
 
     //
@@ -168,13 +189,17 @@ const controller = (() => {
     }, {});
 
     const play = (pos) => {
+
+        if(onOff.getCounter() > 0){
+            console.log("The game is Over");
+            return
+        }
         
         if ( lastRound != roundCounter.getCounter()) {
             console.log(roundCounter.getCounter());
         };
 
-        const selectedPlayer = selectPlayer();
-        selectedPlayer.setMove(pos);
+        getPlayerToMove().setMove(pos);
         lastRound = roundCounter.getCounter();
         roundPlay();
         pointCounter();
@@ -208,10 +233,7 @@ const controller = (() => {
     controller.play(2);
     controller.play(2);
     controller.play(4);
+    controller.play(4);
     
-    console.log(gameBoard.get());
+    // console.log(gameBoard.get());
 })();
-
-
-// controller.reset();
-// console.log(gameBoard.get());
