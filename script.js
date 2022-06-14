@@ -101,7 +101,21 @@ const uiController =(() => {
         turnSpan.textContent = turn;
     };
 
-    const resetGame = () => controller.reset();
+    const showResult = (results) => {
+       
+        for(i=0; i < fields.length; i++){
+            
+            if(results.includes(Number(fields[i].getAttribute('data-field')))){
+                fields[i].classList.add('winner');
+            } else fields[i].classList.add('looser');   
+        } 
+    };
+
+    const resetGame = () => {
+        controller.reset();
+        fields.forEach(field => field.textContent = '');
+        fields.forEach(field => field.classList.remove('winner', 'looser', 'disable'))
+    };
 
     const reset = document.querySelector('.btn-reset');
     const start = document.querySelector('btn-start');
@@ -110,7 +124,7 @@ const uiController =(() => {
     reset.addEventListener('click', resetGame)
     fields.forEach(field => field.addEventListener('click', selectedField));
 
-    return { showMoviment, showTurn }
+    return { showMoviment, showTurn, showResult }
 })();
 
 //
@@ -202,6 +216,7 @@ const controller = (() => {
                     };
                     if (hasWinner(playerPoints.getCounter())) {
                         endGame(getPlayer(i));
+                        uiController.showResult(winnigElement);
                         break playerLoop;
                     };
                 };
@@ -217,7 +232,8 @@ const controller = (() => {
         turnCounter.reset();
         gameBoard.reset();
         allPlayersPhase = 0;
-        onOff.reset()
+        onOff.reset();
+        uiController.showTurn(turnCounter.getCounter());
     };
 
     //

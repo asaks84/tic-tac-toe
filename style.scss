@@ -98,6 +98,7 @@ body {
 }
 
 header {
+    margin-top: 20px;
     margin-bottom: auto;
     flex-direction: column;
     align-items: center;
@@ -108,9 +109,10 @@ footer {
     margin-top: auto;
     font-size: .8rem;
     text-align: center;
-    & > .credits{
-        
-        &>p:nth-child(2):before{
+
+    &>.credits {
+
+        &>p:nth-child(2):before {
             font-family: "Material Design Icons";
             font-size: 1.1rem !important;
             content: '\F02A4';
@@ -119,12 +121,12 @@ footer {
             right: 2px;
         }
     }
-    
 
-    &>.disclaimer{
+
+    &>.disclaimer {
         font-size: .8rem;
 
-        &::before{
+        &::before {
             font-family: "Material Design Icons";
             font-size: 1.2rem !important;
             content: '\F071F';
@@ -141,8 +143,13 @@ main {
     & aside {
         min-width: 20vw;
 
+
         @include responsive(phone) {
             text-align: center;
+
+            & h4 {
+                visibility: hidden;
+            }
         }
 
         & .control {
@@ -155,7 +162,8 @@ main {
 
             & button {
                 width: 88px;
-                &:active{
+
+                &:active {
                     outline: none;
                 }
             }
@@ -181,17 +189,28 @@ main {
                 align-items: center;
                 font-family: var(--sign-font);
                 font-size: 4rem;
-                color: rgba(0,0,0,.6);
+                color: rgba(0, 0, 0, .6);
                 width: 100px;
                 height: 100px;
                 background: #6e6e6e;
                 border-radius: 10px;
                 -webkit-box-shadow: 0px 0px 16px -2px rgba(0, 0, 0, 0.322);
                 box-shadow: 0px 0px 16px -2px rgba(0, 0, 0, 0.322);
-                text-shadow: 3px 2px 3px rgba(255,255,255,.2);
+                text-shadow: 3px 2px 3px rgba(255, 255, 255, .2);
                 border: 1px solid #d3bfbf;
-                
+
+                &.selected{
+                    pointer-events: none;
                 }
+
+                &.looser{
+                    opacity: .6;
+                }
+                &.winner{
+                    background-color: rgba(38, 83, 38, 0.514);
+                    border: 1px solid #3d4e3e;
+                }
+            }
         }
     }
 }
