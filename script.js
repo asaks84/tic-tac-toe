@@ -1,21 +1,3 @@
-/*
-   WHY WHEN I USE MODULES, I CAN'T EXPORT CONTROLLER TO script.js? 
-   THIS STOP THE DOM ELEMENTS TO WORK
-*/
-
-/*
-    You’re going to store the gameboard as an array inside of a Gameboard object, 
-    so start there! Your players are also going to be stored in objects… and you’re probably 
-    going to want an object to control the flow of the game itself.
-        
-    Your main goal here is to have as little global code as possible. 
-    Try tucking everything away inside of a module or factory. 
-        
-    Rule of thumb: if you only ever need ONE of something 
-    (gameBoard, displayController), use a module. If you need multiples of something 
-    (players!), create them with factories.
-*/
-
 const counterCreator = (start = 0) => {
     const firstNum = start;
     let count = start;
@@ -26,7 +8,6 @@ const counterCreator = (start = 0) => {
 
     return { add, reset, getCounter };
 };
-
 
 const gameBoard = (() => {
 
@@ -69,29 +50,13 @@ const Player = function (name, sign) {
     return Object.assign({}, { getSign, getName, setMove });
 };
 
+
 //
 //  UI CONTROLLER
 //
 
+
 const uiController =(() => {
-
-    // creating screen in future
-
-    // const createGame = () => {
-    //     const main = document.querySelector('main');
-        
-    //     const aside = document.createElement('aside');
-    //     const section = document.createElement('section');
-    //     const div = document.createElement('div');
-    //     const para = document.createElement('p')
-
-    //     // creating menu
-
-    //     (function(){
-    //         aside
-
-    //     })();
-    // }
 
     function selectedField(e){
         const attr = e.target.getAttribute('data-sound');
@@ -146,6 +111,7 @@ const uiController =(() => {
     return { showMoviment, showTurn, showResult }
 })();
 
+
 //
 //  GAME CONTROLLER
 //
@@ -176,7 +142,10 @@ const controller = (() => {
         const numberOfMoves = getAmountOfPlays();
         
         // It could be better comparing a actualPlayer and a nextPlayer
-        // but I have to find nextPlayer first, for this game it's ok to do here
+        // but I have to find nextPlayer first.
+        // For this game it's ok to use this simple way,
+        // and I don't have much time to spend here.
+        // Maybe next time.
         
         if (Object.keys(numberOfMoves).length === 0) {
             return getPlayer(0);
@@ -216,10 +185,9 @@ const controller = (() => {
         /*
             Replacing last solution with forEach(), 
             only because it was unstoppable! 
-            Also now I can use it for all players.
+            Also now I can use only one comparsion for all players.
             
-            The forEach solution is on the commit before this one 
-            "replacing forEach solution for verifyResult()"
+            commit name "replacing forEach solution for verifyResult()"
         */
 
         playerLoop:
@@ -286,7 +254,7 @@ const controller = (() => {
             return
         }
 
-        //turn counter
+        // turn counter
         // the onOff condition is to not change turn if the game is over
 
         getPlayerToMove().setMove(pos);
@@ -318,5 +286,3 @@ const controller = (() => {
 
 controller.createPlayer('P1', "X");
 controller.createPlayer('P2', "O");
-
-
