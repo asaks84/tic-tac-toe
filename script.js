@@ -1,3 +1,21 @@
+/*
+   WHY WHEN I USE MODULES, I CAN'T EXPORT CONTROLLER TO script.js? 
+   THIS STOP THE DOM ELEMENTS TO WORK
+*/
+
+/*
+    You’re going to store the gameboard as an array inside of a Gameboard object, 
+    so start there! Your players are also going to be stored in objects… and you’re probably 
+    going to want an object to control the flow of the game itself.
+        
+    Your main goal here is to have as little global code as possible. 
+    Try tucking everything away inside of a module or factory. 
+        
+    Rule of thumb: if you only ever need ONE of something 
+    (gameBoard, displayController), use a module. If you need multiples of something 
+    (players!), create them with factories.
+*/
+
 const counterCreator = (start = 0) => {
     const firstNum = start;
     let count = start;
@@ -21,6 +39,7 @@ const gameBoard = (() => {
         if (isEmpty(pos)) {
             saveResult(pos, sign);
             controller.movesCounter.add();
+            console.log('moves counter', controller.movesCounter.getCounter())
             uiController.showMoviment(pos, sign);
             console.log(sign + " = " + pos);
         } else {
@@ -56,6 +75,24 @@ const Player = function (name, sign) {
 
 const uiController =(() => {
 
+    // creating screen in future
+
+    // const createGame = () => {
+    //     const main = document.querySelector('main');
+        
+    //     const aside = document.createElement('aside');
+    //     const section = document.createElement('section');
+    //     const div = document.createElement('div');
+    //     const para = document.createElement('p')
+
+    //     // creating menu
+
+    //     (function(){
+    //         aside
+
+    //     })();
+    // }
+
     function selectedField(e){
         const attr = e.target.getAttribute('data-sound');
         const fieldSelected = e.target.getAttribute('data-field');
@@ -63,12 +100,13 @@ const uiController =(() => {
         playAudio(attr);
     };
     
-    const playAudio = (attr) => {
+    function playAudio(attr) {
         const toPlay = document.querySelector(`audio[data-sound="${attr}"]`);
         const divChange = document.querySelector(`div[data-sound="${attr}"]`);
         if (!toPlay) { return };
     
-       toPlay.currentTime = 0;
+       // divChange.classList.add('playing');
+        toPlay.currentTime = 0;
         toPlay.play();
     };
 
@@ -216,6 +254,8 @@ const controller = (() => {
         gameBoard.reset();
         allPlayersPhase = 0;
         onOff.reset();
+        movesCounter.reset();
+        console.clear();
         uiController.showTurn(turnCounter.getCounter());
     };
 
@@ -243,22 +283,26 @@ const controller = (() => {
 
         if (onOff.getCounter() > 0) {
             console.log("The game is Over");
-            return
         }
+
+        //turn counter
+        // the onOff condition is to not change turn if the game is over
 
         getPlayerToMove().setMove(pos);
         allPlayersPhase = turnCounter.getCounter();
-        
+        if (isAllPlayersPlayed() && fieldIsEmpty && onOff.getCounter() < 1) {
+            turnCounter.add();
+        }
+
+        verifyResult();
+
+        // turn exhibition;
+
         if (allPlayersPhase != turnCounter.getCounter()) {
             console.log(turnCounter.getCounter());
             uiController.showTurn(turnCounter.getCounter())
         };
         
-        verifyResult();
-
-        if (isAllPlayersPlayed() && fieldIsEmpty) {
-            turnCounter.add();
-        }
     };
 
     console.log(turnCounter.getCounter());
