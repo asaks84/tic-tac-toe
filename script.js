@@ -212,7 +212,7 @@ const controller = (() => {
                 playerPoints.reset();
             };
         };
-        if(movesCounter.getCounter() >= 9){
+        if(movesCounter.getCounter() >= 9 && onOff.getCounter() < 1){
             console.log("It's a Draw!" )
         }
     };
@@ -258,12 +258,13 @@ const controller = (() => {
         // the onOff condition is to not change turn if the game is over
 
         getPlayerToMove().setMove(pos);
+        
+        verifyResult();
+        
         allPlayersPhase = turnCounter.getCounter();
         if (isAllPlayersPlayed() && fieldIsEmpty && onOff.getCounter() < 1) {
             turnCounter.add();
         }
-
-        verifyResult();
 
         // turn exhibition;
 
