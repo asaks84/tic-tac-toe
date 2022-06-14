@@ -283,6 +283,7 @@ const controller = (() => {
 
         if (onOff.getCounter() > 0) {
             console.log("The game is Over");
+            return
         }
 
         //turn counter
