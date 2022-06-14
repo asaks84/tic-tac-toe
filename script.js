@@ -74,6 +74,24 @@ const Player = function (name, sign) {
 
 const uiController =(() => {
 
+    // creating screen in future
+
+    // const createGame = () => {
+    //     const main = document.querySelector('main');
+        
+    //     const aside = document.createElement('aside');
+    //     const section = document.createElement('section');
+    //     const div = document.createElement('div');
+    //     const para = document.createElement('p')
+
+    //     // creating menu
+
+    //     (function(){
+    //         aside
+
+    //     })();
+    // }
+
     function selectedField(e){
         const attr = e.target.getAttribute('data-sound');
         const fieldSelected = e.target.getAttribute('data-field');
@@ -156,6 +174,8 @@ const controller = (() => {
     const getPlayerToMove = () => {
         const numberOfMoves = getAmountOfPlays();
         
+        // It could be better comparing a actualPlayer and a nextPlayer
+        // but I have to find nextPlayer first, for this game it's ok to do here
         
         if (Object.keys(numberOfMoves).length === 0) {
             return getPlayer(0);
@@ -248,6 +268,11 @@ const controller = (() => {
         return obj;
     }, {});
 
+    const isAllPlayersPlayed = () => {
+        const numberOfMoves = getAmountOfPlays();
+
+        return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()])
+    };
 
     const play = (pos) => {
 
@@ -270,12 +295,6 @@ const controller = (() => {
         };
         
         verifyResult();
-    };
-
-    const isAllPlayersPlayed = () => {
-        const numberOfMoves = getAmountOfPlays();
-
-        return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()])
     };
 
     console.log(turnCounter.getCounter());

@@ -6,7 +6,7 @@
 :root {
   --font-family: "Questrial", sans-serif;
   --font-size: 16px;
-  --line-height: .3rem;
+  --line-height: 1rem;
   --sign-font: "Fredoka One", cursive;
 }
 
@@ -85,6 +85,11 @@ footer {
   margin-top: auto;
   font-size: 0.8rem;
   text-align: center;
+  margin-bottom: 0.3rem;
+}
+footer p {
+  margin-top: 0.4rem;
+  margin-bottom: 0;
 }
 footer > .credits > p:nth-child(2):before {
   font-family: "Material Design Icons";
@@ -111,6 +116,7 @@ main {
 }
 main aside {
   min-width: 20vw;
+  text-align: center;
 }
 @media (max-width: 599px) {
   main aside {
