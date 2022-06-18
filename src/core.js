@@ -126,16 +126,15 @@ const controller = (() => {
 
         const numberOfPlayers = getAmountOfPlayers();
         const playerPoints = counterCreator();
+
        
-        /*
-            Replacing last solution with forEach(), 
-            only because it was unstoppable! 
-            Also now I can use only one comparsion for all players.
-            
-            commit name "replacing forEach solution for verifyResult()"
-        */
+        
+        // Replacing last solution with forEach(), 
+        // only because it was unstoppable! 
+        // Also now I can use only one comparsion for all players.
+        // commit name "replacing forEach solution for verifyResult()"
 
-
+        
         playerLoop:
         for (i = 0; i < numberOfPlayers; i++) {
 
@@ -277,54 +276,6 @@ const uiController =(() => {
         } 
     };
 
-    const resetGame = () => {
-        const fields = Array.from(document.querySelectorAll('.screen>div'));
-
-        controller.reset();
-        fields.forEach(field => field.textContent = '');
-        fields.forEach(field => field.classList.remove('winner', 'looser', 'selected'))
-    };
-
-    // Generate display
-    // I don't know how to put this function in separeted file yet.
-
-    (() => {
-
-        const controls = document.querySelector('div.control')
-        const buttons = {'reset': resetGame,}
-        
-        // create the field
-        const screenFields = document.querySelector('div.screen');
-    
-        for (i = 0; i < 9; i++) {
-            const divField = document.createElement('div');
-    
-            // class="flex" data-sound="click" data-field="0"
-            divField.classList.add('flex');
-            divField.setAttribute('data-sound', 'click');
-            divField.setAttribute('data-field', i);
-            divField.addEventListener('click', selectedField);
-            screenFields.appendChild(divField);        
-        };
-
-        // create button controls
-        // div.control
-
-        for(const key in buttons){
-            const newButton = document.createElement('button');
-            const div = document.createElement('div');
-            newButton.classList.add('btn');
-            newButton.addEventListener('click', buttons[key]);
-            newButton.textContent = key
-            div.appendChild(newButton)
-            controls.appendChild(div);
-        }
-
-        const allFields = screenFields.childNodes;
-
-        return allFields;
-    })()
-
     function selectedField(e){
         const attr = e.target.getAttribute('data-sound');
         const fieldSelected = e.target.getAttribute('data-field');
@@ -332,12 +283,61 @@ const uiController =(() => {
         playAudio(attr);
     };
 
-    showTurn(controller.turnCounter.getCounter())
-    console.log(controller.turnCounter.getCounter());
+    const resetGame = () => {
+        const fields = Array.from(document.querySelectorAll('.screen>div'));
 
-    return { showMoviment, showTurn, showResult };
+        controller.reset();
+        fields.forEach(field => field.textContent = '');
+        fields.forEach(field => field.classList.remove('winner', 'looser', 'selected'))
+    };
+    
+
+    return { showMoviment, showTurn, showResult, selectedField, resetGame };
+
 })();
 
-// start with seted players
+// Create display
+// I don't know how to put this function in a separeted file yet.
+
+(function createDsiplay() {
+
+    const controls = document.querySelector('div.control')
+    const buttons = { 'reset': 'uiController.resetGame' }
+
+    // create the field
+    const screenFields = document.querySelector('div.screen');
+
+    for (let i = 0; i < 9; i++) {
+        const divField = document.createElement('div');
+
+        // class="flex" data-sound="click" data-field="0"
+        divField.classList.add('flex');
+        divField.setAttribute('data-sound', 'click');
+        divField.setAttribute('data-field', i);
+        divField.addEventListener('click', uiController.selectedField);
+        screenFields.appendChild(divField);
+    };
+
+    // create button controls
+    // div.control
+
+    for (const key in buttons) {
+        const newButton = document.createElement('button');
+        const div = document.createElement('div');
+        newButton.classList.add('btn');
+        newButton.addEventListener('click', eval(buttons[key]));
+        newButton.textContent = key
+        div.appendChild(newButton)
+        controls.appendChild(div);
+    };
+
+    // start first turn
+    uiController.showTurn(controller.turnCounter.getCounter())
+    console.log(controller.turnCounter.getCounter());
+
+})();
+
+
+// start with presetted players
 controller.createPlayer('P1', "X");
 controller.createPlayer('P2', "O");
