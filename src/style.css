@@ -1,0 +1,187 @@
+@import url("./font/css/materialdesignicons.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Questrial&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Fredoka+One");
+@import url("./font/fonts/materialdesignicons-webfont.woff2");
+@import url("./normalize.css");
+:root {
+  --font-family: "Questrial", sans-serif;
+  --font-size: 16px;
+  --line-height: 1rem;
+  --sign-font: "Fredoka One", cursive;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-size: var(--font-size);
+  font-family: var(--font-family);
+  height: 100%;
+  min-height: 100%;
+  background-color: var(--background-color);
+  line-height: var(--line-height);
+}
+
+.flex {
+  display: flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.btn {
+  box-shadow: 2px 3px 0px 0px #61615d;
+  background: linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);
+  background-color: #ededed;
+  border-radius: 15px;
+  border: 1px solid #444444;
+  display: inline-block;
+  cursor: pointer;
+  font-weight: bold;
+  color: #3d3d3d;
+  padding: 7px 25px;
+  text-decoration: none;
+  text-shadow: 0px 1px 0px #e1e2ed;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn:hover {
+  background: linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);
+  background-color: #bab1ba;
+}
+
+.btn:active {
+  position: relative;
+  top: 1px;
+}
+
+#wrapper {
+  min-height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+header {
+  margin-top: 20px;
+  margin-bottom: auto;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+footer {
+  margin-top: auto;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 0.3rem;
+}
+footer p {
+  margin-top: 0.4rem;
+  margin-bottom: 0;
+}
+footer > .credits > p:nth-child(2):before {
+  font-family: "Material Design Icons";
+  font-size: 1.1rem !important;
+  content: "\f02a4";
+  position: relative;
+  top: 2px;
+  right: 2px;
+}
+footer > .disclaimer {
+  font-size: 0.8rem;
+}
+footer > .disclaimer::before {
+  font-family: "Material Design Icons";
+  font-size: 1.2rem !important;
+  content: "\f071f";
+  position: relative;
+  top: 2.5px;
+  right: 2px;
+}
+
+main {
+  gap: 20px;
+}
+main aside {
+  min-width: 20vw;
+  text-align: center;
+}
+@media (max-width: 599px) {
+  main aside {
+    text-align: center;
+  }
+  main aside h4 {
+    visibility: hidden;
+  }
+}
+main aside .control {
+  flex-direction: column;
+  gap: 10px;
+}
+@media (max-width: 599px) {
+  main aside .control {
+    flex-direction: row;
+  }
+}
+main aside .control button {
+  width: 88px;
+}
+main aside .control button:active {
+  outline: none;
+}
+@media (max-width: 599px) {
+  main {
+    flex-wrap: wrap-reverse;
+    justify-content: center;
+  }
+}
+main section {
+  text-align: center;
+}
+main section .screen {
+  justify-content: center;
+  width: 320px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+main section .screen > div {
+  justify-content: center;
+  align-items: center;
+  font-family: var(--sign-font);
+  font-size: 4rem;
+  color: rgba(0, 0, 0, 0.6);
+  width: 100px;
+  height: 100px;
+  background: #6e6e6e;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 0px 16px -2px rgba(0, 0, 0, 0.322);
+  box-shadow: 0px 0px 16px -2px rgba(0, 0, 0, 0.322);
+  text-shadow: 3px 2px 3px rgba(255, 255, 255, 0.2);
+  border: 1px solid #d3bfbf;
+  cursor: pointer;
+}
+main section .screen > div.selected {
+  pointer-events: none;
+  cursor: auto;
+}
+main section .screen > div.looser {
+  opacity: 0.6;
+}
+main section .screen > div.winner {
+  background-color: rgba(38, 83, 38, 0.514);
+  border: 1px solid #3d4e3e;
+}
+
+/*# sourceMappingURL=style.css.map */

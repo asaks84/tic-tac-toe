@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    
+    <title>tic tac toe</title>
+<script defer src="index.bundle.js"></script></head>
+
+<body>
+    <div id="wrapper" class="flex">
+
+        <header class="flex">
+            <div class="logo">
+                <h1># tic tac toe #</h1>
+            </div>
+        </header>
+
+        <main class="flex">
+
+            <aside>
+                <div>
+                    <h4>controls</h4>
+                </div>
+                <div class="control flex">
+                    <!-- 
+                    <div>
+                        <button class="btn btn-start">Start</button>
+                    </div> 
+                    <div>
+                        <button class="btn btn-reset">Reset</button>
+                    </div>
+                    -->
+                </div>
+            </aside>
+
+            <section>
+
+                <!-- <h2>Best of <span id="numberOfRounds">3</span> rounds</h2> -->
+                <h2></h2>
+                <p><strong>Turn:</strong> <span id="turnCounter"></span></p>
+                <div class="players">
+                    <div class="player"></div>
+                    <div class="player"></div>
+                </div>
+
+                <div class="screen flex">
+                    <!-- <div class="flex" data-sound="click" data-field="0"></div>
+                    <div class="flex" data-sound="click" data-field="1"></div>
+                    <div class="flex" data-sound="click" data-field="2"></div>
+                    <div class="flex" data-sound="click" data-field="3"></div>
+                    <div class="flex" data-sound="click" data-field="4"></div>
+                    <div class="flex" data-sound="click" data-field="5"></div>
+                    <div class="flex" data-sound="click" data-field="6"></div>
+                    <div class="flex" data-sound="click" data-field="7"></div>
+                    <div class="flex" data-sound="click" data-field="8"></div> -->
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer>
+            <div class="disclaimer">
+                this project has sounds effects.
+             </div>
+            <div class="credits">
+                <p><a href="https://github.com/asaks84/tic-tac-toe" target="_blank">Repository here</a>. Developed by <a href="https://github.com/asaks84">@asak84</a>.</p>
+                <p>This game is part of a JavaScript coding program by <a href="http://theodinproject.com" target="_blank">theOdinProject</a>.</p>
+            </div>
+        </footer>
+
+    </div>
+    <audio data-sound="click" src="sounds/click.wav"></audio>
+</body>
+
+</html>

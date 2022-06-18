@@ -1,3 +1,9 @@
+//
+// UI GENERATOR
+//
+
+
+
 const counterCreator = (start = 0) => {
     const firstNum = start;
     let count = start;
@@ -20,7 +26,7 @@ const gameBoard = (() => {
         if (isEmpty(pos)) {
             saveResult(pos, sign);
             controller.movesCounter.add();
-            console.log('moves counter', controller.movesCounter.getCounter())
+            
             uiController.showMoviment(pos, sign);
             console.log(sign + " = " + pos);
         } else {
@@ -52,76 +58,13 @@ const Player = function (name, sign) {
 
 
 //
-//  UI CONTROLLER
-//
-
-
-const uiController =(() => {
-
-    function selectedField(e){
-        const attr = e.target.getAttribute('data-sound');
-        const fieldSelected = e.target.getAttribute('data-field');
-        controller.play(fieldSelected);
-        playAudio(attr);
-    };
-    
-    function playAudio(attr) {
-        const toPlay = document.querySelector(`audio[data-sound="${attr}"]`);
-        const divChange = document.querySelector(`div[data-sound="${attr}"]`);
-        if (!toPlay) { return };
-    
-       // divChange.classList.add('playing');
-        toPlay.currentTime = 0;
-        toPlay.play();
-    };
-
-    const showMoviment = (field, sign) => {
-        const div = document.querySelector(`[data-field="${field}"]`);
-        div.textContent = sign;
-    };
-
-    const showTurn = (turn) => {
-        const turnSpan = document.querySelector('#turnCounter');
-        turnSpan.textContent = turn;
-    };
-
-    const showResult = (results) => {
-       
-        for(i=0; i < fields.length; i++){
-            
-            if(results.includes(Number(fields[i].getAttribute('data-field')))){
-                fields[i].classList.add('winner');
-            } else fields[i].classList.add('looser');   
-        } 
-    };
-
-    const resetGame = () => {
-        controller.reset();
-        fields.forEach(field => field.textContent = '');
-        fields.forEach(field => field.classList.remove('winner', 'looser', 'disable'))
-    };
-
-    const reset = document.querySelector('.btn-reset');
-    const start = document.querySelector('btn-start');
-    const fields = Array.from(document.querySelectorAll('.screen>div'));
-
-    reset.addEventListener('click', resetGame)
-    fields.forEach(field => field.addEventListener('click', selectedField));
-
-    return { showMoviment, showTurn, showResult }
-})();
-
-
-//
 //  GAME CONTROLLER
 //
 
 
 const controller = (() => {
-    let allPlayersPhase = 0;
-
+    
     const turnCounter = counterCreator(1);
-    const playerRotation = counterCreator();
     const onOff = counterCreator();
     const movesCounter = counterCreator();
 
@@ -162,12 +105,14 @@ const controller = (() => {
     //
 
     const hasWinner = (counter) => (counter == 3);
-    const endGame = (player) => {
-        console.log(`${player.getName()} wins!\nCongrats!`)
-        onOff.add()
+    const endGame = (player, winnigElement) => {
+        console.log(`${player.getName()} wins!\nCongrats!`);
+        uiController.showResult(winnigElement);
+        onOff.add();
     };
 
     const verifyResult = () => {
+
         const winnigOptions = [
             [0, 1, 2],
             [3, 4, 5],
@@ -178,10 +123,10 @@ const controller = (() => {
             [0, 4, 8],
             [2, 4, 6]
         ];
+
         const numberOfPlayers = getAmountOfPlayers();
         const playerPoints = counterCreator();
-        const numberOfMoves = getAmountOfPlays();
-
+       
         /*
             Replacing last solution with forEach(), 
             only because it was unstoppable! 
@@ -189,6 +134,7 @@ const controller = (() => {
             
             commit name "replacing forEach solution for verifyResult()"
         */
+
 
         playerLoop:
         for (i = 0; i < numberOfPlayers; i++) {
@@ -204,8 +150,7 @@ const controller = (() => {
                         playerPoints.add();
                     };
                     if (hasWinner(playerPoints.getCounter())) {
-                        endGame(getPlayer(i));
-                        uiController.showResult(winnigElement);
+                        endGame(getPlayer(i), winnigElement);
                         break playerLoop;
                     };
                 };
@@ -220,10 +165,10 @@ const controller = (() => {
     const reset = () => {
         turnCounter.reset();
         gameBoard.reset();
-        allPlayersPhase = 0;
         onOff.reset();
         movesCounter.reset();
         console.clear();
+        console.log(turnCounter.getCounter());
         uiController.showTurn(turnCounter.getCounter());
     };
 
@@ -245,39 +190,46 @@ const controller = (() => {
         return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()])
     };
 
-    const play = (pos) => {
+    const isGameOver = () => (onOff.getCounter() > 0) 
+        
 
-        const fieldIsEmpty = gameBoard.isEmpty(pos);
-
-        if (onOff.getCounter() > 0) {
-            console.log("The game is Over");
-            return
-        }
+    const changeTurnCounter = (isFieldEmpty) => {
 
         // turn counter
         // the onOff condition is to not change turn if the game is over
-
-        getPlayerToMove().setMove(pos);
-        
-        verifyResult();
-        
-        allPlayersPhase = turnCounter.getCounter();
-        if (isAllPlayersPlayed() && fieldIsEmpty && onOff.getCounter() < 1) {
+        if (isAllPlayersPlayed() && isFieldEmpty && onOff.getCounter() < 1) {
             turnCounter.add();
-        }
-
-        // turn exhibition;
-
-        if (allPlayersPhase != turnCounter.getCounter()) {
             console.log(turnCounter.getCounter());
             uiController.showTurn(turnCounter.getCounter())
         };
-        
+
+
     };
 
-    console.log(turnCounter.getCounter());
-    uiController.showTurn(turnCounter.getCounter())
+    const play = (pos) => {
+        // Set all changes after every move on the game
+        
+        const isFieldEmpty = gameBoard.isEmpty(pos);
+
+        // Verify if game is over
+        if(isGameOver()){
+            console.log('The game is Over');
+            return
+        }
+
+        //Try to Move
+        getPlayerToMove().setMove(pos);
+        
+        // Verify result the game after move
+        verifyResult();
+
+        // Change turn counter
+        changeTurnCounter(isFieldEmpty);
+           
+    };
+
     return {
+        turnCounter,
         movesCounter,
         play,
         reset,
@@ -285,5 +237,106 @@ const controller = (() => {
     };
 })();
 
+
+//
+//  UI CONTROLLER
+//
+
+
+const uiController =(() => {
+
+    function playAudio(attr) {
+        const toPlay = document.querySelector(`audio[data-sound="${attr}"]`);
+        if (!toPlay) { return };
+    
+
+        toPlay.currentTime = 0;
+        toPlay.play();
+    };
+
+    const showMoviment = (field, sign) => {
+        const div = document.querySelector(`[data-field="${field}"]`);
+        div.textContent = sign;
+        div.classList.add('selected');
+    };
+
+    const showTurn = (turn) => {
+        const turnSpan = document.querySelector('#turnCounter');
+        turnSpan.textContent = turn;
+    };
+
+    const showResult = (results) => {
+        const fields = Array.from(document.querySelectorAll('.screen>div'));
+
+       
+        for(i=0; i < fields.length; i++){
+            
+            if(results.includes(Number(fields[i].getAttribute('data-field')))){
+                fields[i].classList.add('winner', 'selected');
+            } else fields[i].classList.add('looser', 'selected');   
+        } 
+    };
+
+    const resetGame = () => {
+        const fields = Array.from(document.querySelectorAll('.screen>div'));
+
+        controller.reset();
+        fields.forEach(field => field.textContent = '');
+        fields.forEach(field => field.classList.remove('winner', 'looser', 'selected'))
+    };
+
+    // Generate display
+
+    (() => {
+
+        const controls = document.querySelector('div.control')
+        const buttons = {'reset': resetGame,}
+        
+        // create the field
+        const screenFields = document.querySelector('div.screen');
+    
+        for (i = 0; i < 9; i++) {
+            const divField = document.createElement('div');
+    
+            // class="flex" data-sound="click" data-field="0"
+            divField.classList.add('flex');
+            divField.setAttribute('data-sound', 'click');
+            divField.setAttribute('data-field', i);
+            divField.addEventListener('click', selectedField);
+            screenFields.appendChild(divField);        
+        };
+
+        // create button controls
+        // div.control
+
+        for(const key in buttons){
+            const newButton = document.createElement('button');
+            const div = document.createElement('div');
+            newButton.classList.add('btn');
+            newButton.addEventListener('click', buttons[key]);
+            newButton.textContent = key
+            div.appendChild(newButton)
+            controls.appendChild(div);
+        }
+
+        const allFields = screenFields.childNodes;
+
+        return allFields;
+    })()
+
+    function selectedField(e){
+        const attr = e.target.getAttribute('data-sound');
+        const fieldSelected = e.target.getAttribute('data-field');
+        controller.play(fieldSelected);
+        playAudio(attr);
+    };
+
+    showTurn(controller.turnCounter.getCounter())
+    console.log(controller.turnCounter.getCounter());
+
+    return { showMoviment, showTurn, showResult };
+})();
+
+// start with seted players
 controller.createPlayer('P1', "X");
 controller.createPlayer('P2', "O");
