@@ -1,5 +1,5 @@
 import "./style.scss";
-import * as core from "./core.js";
+import { uiController, controller } from "./core.js";
 
 
 const createDsiplay = (() => {
@@ -16,7 +16,7 @@ const createDsiplay = (() => {
             divField.classList.add('flex');
             divField.setAttribute('data-sound', 'click');
             divField.setAttribute('data-field', i);
-            divField.addEventListener('click', core.uiController.selectedField);
+            divField.addEventListener('click', uiController.selectedField);
             screenFields.appendChild(divField);
         };
 
@@ -24,7 +24,7 @@ const createDsiplay = (() => {
 
     function setButtons() {
         const controls = document.querySelector('div.control')
-        const buttons = { 'reset': core.uiController.resetGame }
+        const buttons = { 'reset': uiController.resetGame }
 
         // create button controls
         // div.control
@@ -52,10 +52,10 @@ const createDsiplay = (() => {
 
     // create new players
     // start with presetted players
-    core.controller.createPlayer('P1', "X");
-    core.controller.createPlayer('P2', "O");
+    controller.createPlayer('P1', "X");
+    controller.createPlayer('P2', "O");
 
     // start first turn
-    core.uiController.showTurn(core.controller.turnCounter.getCounter())
+    uiController.showTurn(controller.turnCounter.getCounter())
 
 })();
