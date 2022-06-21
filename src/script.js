@@ -24,11 +24,10 @@ const createDsiplay = (() => {
 
     function setButtons() {
         const controls = document.querySelector('div.control')
-        const buttons = { 'reset': uiController.resetGame }
+        const buttons = { 'Reset': uiController.resetGame }
 
         // create button controls
         // div.control
-
         for (const key in buttons) {
             const newButton = document.createElement('button');
             const div = document.createElement('div');
