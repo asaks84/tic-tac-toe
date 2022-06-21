@@ -1,3 +1,6 @@
+// Refactoring code due a loop game and other 
+// functions has just one execution (Single reponsibility)
+
 const counterCreator = (start = 0) => {
     const firstNum = start;
     let count = start;
@@ -15,22 +18,11 @@ const gameBoard = (() => {
 
     const saveResult = (pos, player) => boardField[pos] = player;
     const isEmpty = (pos) => (!boardField[pos]);
-    const setResult = (pos, sign, name) => {
-
-        if (isEmpty(pos)) {
-            saveResult(pos, sign);
-            controller.movesCounter.add();
-            uiController.showMoviment(pos, sign);
-        } else {
-            return
-        }
-
-    }
     const get = () => boardField;
     const getPosition = (pos) => boardField[pos];
     const reset = () => boardField.length = 0;
 
-    return { setResult, isEmpty, get, getPosition, reset };
+    return { saveResult, isEmpty, get, getPosition, reset };
 })();
 
 
@@ -42,7 +34,7 @@ const Player = function (name, sign) {
 
     const getName = () => playerName;
     const getSign = () => playerSign;
-    const setMove = (pos) => gameBoard.setResult(pos, sign, getName());
+    const setMove = (pos) => gameBoard.saveResult(pos, sign);
 
     return Object.assign({}, { getSign, getName, setMove });
 };
@@ -56,7 +48,7 @@ const Player = function (name, sign) {
 export const controller = (() => {
     
     const turnCounter = counterCreator(1);
-    const onOff = counterCreator();
+    const gameOver = counterCreator();
     const movesCounter = counterCreator();
 
     const players = [];
@@ -98,7 +90,7 @@ export const controller = (() => {
     const hasWinner = (counter) => (counter == 3);
     const endGame = (player, winnigElement) => {
         uiController.showResult(winnigElement);
-        onOff.add();
+        gameOver.add();
     };
 
     const verifyResult = () => {
@@ -139,21 +131,20 @@ export const controller = (() => {
                         playerPoints.add();
                     };
                     if (hasWinner(playerPoints.getCounter())) {
-                        endGame(getPlayer(i), winnigElement);
-                        break playerLoop;
+                        
+                        return winnigElement;
                     };
                 };
                 playerPoints.reset();
             };
+            return false;
         };
-        if(movesCounter.getCounter() >= 9 && onOff.getCounter() < 1){
-        }
     };
 
     const reset = () => {
         turnCounter.reset();
         gameBoard.reset();
-        onOff.reset();
+        gameOver.reset();
         movesCounter.reset();
         uiController.showTurn(turnCounter.getCounter());
     };
@@ -176,14 +167,13 @@ export const controller = (() => {
         return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()])
     };
 
-    const isGameOver = () => (onOff.getCounter() > 0) 
+    const isGameOver = () => (gameOver.getCounter() > 0) 
         
 
     const changeTurnCounter = (isFieldEmpty) => {
 
         // turn counter
-        // the onOff condition is to not change turn if the game is over
-        if (isAllPlayersPlayed() && isFieldEmpty && onOff.getCounter() < 1) {
+        if (isAllPlayersPlayed() && isFieldEmpty) {
             turnCounter.add();
             uiController.showTurn(turnCounter.getCounter())
         };
@@ -191,30 +181,49 @@ export const controller = (() => {
 
     };
 
+    // game loop every play
     const play = (pos) => {
         // Set all changes after every move on the game
-        
+
         const isFieldEmpty = gameBoard.isEmpty(pos);
+        const player = getPlayerToMove();
 
         // Verify if game is over
+        //If game is over, stop execution
         if(isGameOver()){
             return
         }
-
-        //Try to Move
-        getPlayerToMove().setMove(pos);
         
-        // Verify result the game after move
-        verifyResult();
+        // if is not over, continue game
+        // if isn't empty, stop, else cotinue play
+        if (!isFieldEmpty) {
+            return
+        } else {
+            // make move
+            player.setMove(pos);
+            // count movements to set a Draw
+            movesCounter.add();
+            // show movement on display
+            uiController.showMoviment(pos, player.getSign());
+        };
+        
+        
+        // Verify result the game after move;
+        const winnerCombination = verifyResult();
+        
+        // If it's false, change turnCounter and stop play
+        // It has the winner combinetion positions and endGame.
 
-        // Change turn counter
-        changeTurnCounter(isFieldEmpty);
-           
+        if(!winnerCombination){
+            changeTurnCounter(isFieldEmpty);
+            return
+        } else endGame(player, winnerCombination);
+       
+          
     };
 
     return {
         turnCounter,
-        movesCounter,
         play,
         reset,
         createPlayer
