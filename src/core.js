@@ -58,7 +58,7 @@ export const controller = (() => {
     //
 
     const createPlayer = (name, sign) => {
-        const newPlayer = Player(name, sign)
+        const newPlayer = Player(name, sign);
         players.push(newPlayer);
     };
 
@@ -88,14 +88,14 @@ export const controller = (() => {
     //
 
     const hasWinner = (counter) => (counter == 3);
-    const endGame = (player, winnigElement) => {
-        uiController.showResult(winnigElement);
+    const endGame = (player, sequence) => {
+        uiController.showResult(sequence);
         gameOver.add();
     };
 
     const verifyResult = () => {
 
-        const winnigOptions = [
+        const sequencesToWin = [
             [0, 1, 2],
             [3, 4, 5],
             [6, 7, 8],
@@ -108,32 +108,24 @@ export const controller = (() => {
 
         const numberOfPlayers = getAmountOfPlayers();
         const playerPoints = counterCreator();
-
-       
         
         // Replacing last solution with forEach(), 
         // only because it was unstoppable! 
         // Also now I can use only one comparsion for all players.
-        // commit name "replacing forEach solution for verifyResult()"
 
-        
-        playerLoop:
+        // verify all players
         for (let i = 0; i < numberOfPlayers; i++) {
 
-            combinationPossibilities:
-            for (let winninglength = 0; winninglength < winnigOptions.length; winninglength++) {
-                const winnigElement = winnigOptions[winninglength];
+            // verify all possible sequences to win
+            for (let sequencePosition = 0; sequencePosition < sequencesToWin.length; sequencePosition++) {
+                const sequence = sequencesToWin[sequencePosition];
 
-                eachPositionLoop:
-                for (let eachPos = 0; eachPos < winnigElement.length; eachPos++) {
-                    const pos = winnigElement[eachPos];
-                    if (gameBoard.getPosition(pos) == getPlayer(i).getSign()) {
-                        playerPoints.add();
-                    };
-                    if (hasWinner(playerPoints.getCounter())) {
-                        
-                        return winnigElement;
-                    };
+                // verify each position of each sequence
+                for (let eachPos = 0; eachPos < sequence.length; eachPos++) {
+                    const pos = sequence[eachPos];
+                
+                    if (gameBoard.getPosition(pos) == getPlayer(i).getSign()) playerPoints.add();
+                    if (hasWinner(playerPoints.getCounter())) return sequence;
                 };
                 playerPoints.reset();
             };
@@ -154,9 +146,8 @@ export const controller = (() => {
     //
 
     const getAmountOfPlays = () => gameBoard.get().reduce((obj, sign) => {
-        if (!obj[sign]) {
-            obj[sign] = 0;
-        }
+        if (!obj[sign]) obj[sign] = 0;
+        
         obj[sign]++;
         return obj;
     }, {});
@@ -164,18 +155,17 @@ export const controller = (() => {
     const isAllPlayersPlayed = () => {
         const numberOfMoves = getAmountOfPlays();
 
-        return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()])
+        return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()]);
     };
 
-    const isGameOver = () => (gameOver.getCounter() > 0) 
-        
+    const isGameOver = () => (gameOver.getCounter() > 0);         
 
     const changeTurnCounter = (isFieldEmpty) => {
 
         // turn counter
         if (isAllPlayersPlayed() && isFieldEmpty) {
             turnCounter.add();
-            uiController.showTurn(turnCounter.getCounter())
+            uiController.showTurn(turnCounter.getCounter());
         };
 
 
@@ -190,9 +180,7 @@ export const controller = (() => {
 
         // Verify if game is over
         //If game is over, stop execution
-        if(isGameOver()){
-            return
-        }
+        if(isGameOver()) return;
         
         // if is not over, continue game
         // if isn't empty, stop, else cotinue play
@@ -216,7 +204,7 @@ export const controller = (() => {
 
         if(!winnerCombination){
             changeTurnCounter(isFieldEmpty);
-            return
+            return;
         } else endGame(player, winnerCombination);
        
           
@@ -240,7 +228,7 @@ export const uiController = (() => {
     function playAudio(attr) {
         const toPlay = document.querySelector(`audio[data-sound="${attr}"]`);
         
-        if (!toPlay) { return };
+        if (!toPlay) return;
         
         toPlay.currentTime = 0;
         toPlay.play();
@@ -266,7 +254,7 @@ export const uiController = (() => {
             if(results.includes(Number(fields[i].getAttribute('data-field')))){
                 fields[i].classList.add('winner', 'selected');
             } else fields[i].classList.add('looser', 'selected');   
-        } 
+        }; 
     };
 
     function selectedField(e){
@@ -281,7 +269,7 @@ export const uiController = (() => {
 
         controller.reset();
         fields.forEach(field => field.textContent = '');
-        fields.forEach(field => field.classList.remove('winner', 'looser', 'selected'))
+        fields.forEach(field => field.classList.remove('winner', 'looser', 'selected'));
     };
     
     return { showMoviment, showTurn, showResult, selectedField, resetGame };
