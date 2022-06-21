@@ -137,8 +137,8 @@ export const controller = (() => {
                 };
                 playerPoints.reset();
             };
-            return false;
         };
+        return false;
     };
 
     const reset = () => {
