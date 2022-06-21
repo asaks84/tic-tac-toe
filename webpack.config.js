@@ -7,9 +7,9 @@ module.exports = {
   mode: 'development',
   devtool: 'inline-source-map',
   entry: {
-    index: [
+    index: [ 
       './src/core.js',
-      './src/script.js',
+      './src/script.js'
     ]
   },
 
