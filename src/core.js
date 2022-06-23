@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-
 // Refactoring code due a loop game and other
 // functions has just one execution (Single reponsibility)
 
@@ -112,9 +110,8 @@ export const controller = (() => {
     for (let i = 0; i < numberOfPlayers; i += 1) {
       // verify all possible sequences to win
 
-      // eslint-disable-next-line max-len
-      for (let sequencePosition = 0; sequencePosition < sequencesToWin.length; sequencePosition += 1) {
-        const sequence = sequencesToWin[sequencePosition];
+      for (let sequencePos = 0; sequencePos < sequencesToWin.length; sequencePos += 1) {
+        const sequence = sequencesToWin[sequencePos];
 
         // verify each position of each sequence
         for (let eachPos = 0; eachPos < sequence.length; eachPos += 1) {
