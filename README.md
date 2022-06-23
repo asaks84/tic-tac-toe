@@ -17,14 +17,14 @@ All things below are what I've learned and put it practice on this project.
 #### JavaScript
 
 -  **factory functions** to create players for the game;
- -  **IIFE** board controller, game controller and UI controller;
- -  **Module** DOM creator on script.js and the game controller and uiController on core.js
+-  **IIFE** board controller, game controller and UI controller;
+-  **Module** DOM creator on script.js, controller and uiController on core.js
 
 #### npm
- -  **Webpack** Bundler
- - **@mdi font**
- - **normalizer.css**
- - **eslint** with Airbnb style guide.
+-  **Webpack** Bundler
+- **@mdi font**
+- **normalizer.css**
+- **eslint** with Airbnb style guide.
   
 <hr>
 
