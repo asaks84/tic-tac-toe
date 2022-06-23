@@ -37,6 +37,7 @@ const createDsiplay = (() => {
         this is not necessary for now because the prototype is Array,
         and this means it's an empty array.
 
+        If it was an object, it make more sense.
         eslint forces me to use Object.prototype instead of
         buttons.hasOwnProperty(key).
         Using it to remember why I have to use it.
