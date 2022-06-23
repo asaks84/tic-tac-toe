@@ -32,7 +32,7 @@ const createDsiplay = (() => {
       const div = document.createElement('div');
       newButton.classList.add('btn');
       newButton.addEventListener('click', buttons[key]);
-      newButton.textContent = Object.prototype;
+      newButton.textContent = key;
       div.appendChild(newButton);
       controls.appendChild(div);
     }

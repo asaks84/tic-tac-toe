@@ -8,7 +8,7 @@ A simple Tic Tac Toe game, for practice factory functions and module patterns.
   
 ### Things I used
 
-All things below is what I've learned and put it practice on this project.
+All things below are what I've learned and put it practice on this project.
 
 #### SASS
 
