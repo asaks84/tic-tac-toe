@@ -20,29 +20,36 @@ const createDsiplay = (() => {
 
   function setButtons() {
     const controls = document.querySelector('div.control');
-    const buttons = { Reset: uiController.resetGame };
+    const buttons = [
+      {
+        Name: 'Reset',
+        Function: uiController.resetGame,
+      },
+    ];
 
     // create button controls
     // div.control
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const key in buttons) {
+    for (const obj in buttons) {
       /*
-        Using if verification here due to not getting key from 'buttons' prototype.
-        this is not necessary for now because the prototype is Object,
-        and this means it empty object.
+        Using if verification here due to not getting obj from 'buttons' prototype.
+        this is not necessary for now because the prototype is Array,
+        and this means it's an empty array.
 
         eslint forces me to use Object.prototype instead of
         buttons.hasOwnProperty(key).
         Using it to remember why I have to use it.
+
+        Even if it's not an object, it works fine.
       */
 
-      if (Object.prototype.hasOwnProperty.call(buttons, key)) {
+      if (Array.prototype.hasOwnProperty.call(buttons, obj)) {
         const newButton = document.createElement('button');
         const div = document.createElement('div');
         newButton.classList.add('btn');
-        newButton.addEventListener('click', buttons[key]);
-        newButton.textContent = key;
+        newButton.addEventListener('click', buttons[obj].Function);
+        newButton.textContent = buttons[obj].Name;
         div.appendChild(newButton);
         controls.appendChild(div);
       }
