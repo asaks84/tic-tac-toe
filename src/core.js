@@ -1,5 +1,5 @@
-// Refactoring code due a loop game and other
-// functions has just one execution (Single reponsibility)
+// Refactoring code due to a loop game and other
+// functions have just one execution (Single responsibility)
 
 const counterCreator = (start = 0) => {
   const firstNum = start;
@@ -64,7 +64,7 @@ export const controller = (() => {
   const getPlayerToMove = () => {
     const numberOfMoves = getAmountOfPlays();
 
-    // It could be better comparing a actualPlayer and a nextPlayer
+    // It could be better to compare actualPlayer and a nextPlayer
     // but I have to find nextPlayer first.
     // For this game it's ok to use this simple way,
     // and I don't have much time to spend here.
@@ -189,7 +189,7 @@ export const controller = (() => {
     const winnerCombination = verifyResult();
 
     // If it's false, change turnCounter and stop play
-    // It has the winner combinetion positions and endGame.
+    // It has the winner combination positions and endGame.
 
     if (!winnerCombination) {
       changeTurnCounter(isFieldEmpty);

@@ -10,6 +10,7 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
+    "ignorePatterns":["**/dist/*.js"],
     "rules": {
         "no-param-reassign": "off",
         "no-use-before-define": "off"
