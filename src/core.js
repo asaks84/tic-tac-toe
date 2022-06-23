@@ -1,277 +1,268 @@
-// Refactoring code due a loop game and other 
+/* eslint-disable no-use-before-define */
+
+// Refactoring code due a loop game and other
 // functions has just one execution (Single reponsibility)
 
 const counterCreator = (start = 0) => {
-    const firstNum = start;
-    let count = start;
+  const firstNum = start;
+  let count = start;
 
-    const add = () => count++;
-    const reset = () => count = Number(firstNum);
-    const getCounter = () => count;
+  function add() { count += 1; }
+  function reset() { count = Number(firstNum); }
+  const getCounter = () => count;
 
-    return { add, reset, getCounter };
+  return { add, reset, getCounter };
 };
 
 const gameBoard = (() => {
+  const boardField = [];
 
-    const boardField = new Array();
+  function saveResult(pos, player) { boardField[pos] = player; }
+  function reset() { boardField.length = 0; }
+  const isEmpty = (pos) => (!boardField[pos]);
+  const get = () => boardField;
+  const getPosition = (pos) => boardField[pos];
 
-    const saveResult = (pos, player) => boardField[pos] = player;
-    const isEmpty = (pos) => (!boardField[pos]);
-    const get = () => boardField;
-    const getPosition = (pos) => boardField[pos];
-    const reset = () => boardField.length = 0;
-
-    return { saveResult, isEmpty, get, getPosition, reset };
+  return {
+    saveResult, isEmpty, get, getPosition, reset,
+  };
 })();
 
+const Player = (name, sign) => {
+  const playerSign = sign;
+  const playerName = name;
 
+  const getName = () => playerName;
+  const getSign = () => playerSign;
+  const setMove = (pos) => gameBoard.saveResult(pos, sign);
 
-
-const Player = function (name, sign) {
-    const playerSign = sign;
-    const playerName = name;
-
-    const getName = () => playerName;
-    const getSign = () => playerSign;
-    const setMove = (pos) => gameBoard.saveResult(pos, sign);
-
-    return Object.assign({}, { getSign, getName, setMove });
+  return { getSign, getName, setMove };
 };
-
 
 //
 //  GAME CONTROLLER
 //
 
-
 export const controller = (() => {
-    
-    const turnCounter = counterCreator(1);
-    const gameOver = counterCreator();
-    const movesCounter = counterCreator();
+  const turnCounter = counterCreator(1);
+  const gameOver = counterCreator();
+  const movesCounter = counterCreator();
 
-    const players = [];
+  const players = [];
 
-    //
-    // players controllers
-    //
+  //
+  // players controllers
+  //
 
-    const createPlayer = (name, sign) => {
-        const newPlayer = Player(name, sign);
-        players.push(newPlayer);
-    };
+  const createPlayer = (name, sign) => {
+    const newPlayer = Player(name, sign);
+    players.push(newPlayer);
+  };
 
-    const getPlayer = (pos) => players[pos];
+  const getPlayer = (pos) => players[pos];
 
-    const getPlayerToMove = () => {
-        const numberOfMoves = getAmountOfPlays();
-        
-        // It could be better comparing a actualPlayer and a nextPlayer
-        // but I have to find nextPlayer first.
-        // For this game it's ok to use this simple way,
-        // and I don't have much time to spend here.
-        // Maybe next time.
-        
-        if (Object.keys(numberOfMoves).length === 0) {
-            return getPlayer(0);
-        } else if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
-            return getPlayer(0);
-        } else { return getPlayer(1); };
+  const getAmountOfPlayers = () => players.length;
 
-    };
+  const getPlayerToMove = () => {
+    const numberOfMoves = getAmountOfPlays();
 
-    const getAmountOfPlayers = () => players.length;
+    // It could be better comparing a actualPlayer and a nextPlayer
+    // but I have to find nextPlayer first.
+    // For this game it's ok to use this simple way,
+    // and I don't have much time to spend here.
+    // Maybe next time.
 
-    //
-    // game controllers
-    //
+    if (Object.keys(numberOfMoves).length === 0) {
+      return getPlayer(0);
+    } if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
+      return getPlayer(0);
+    } return getPlayer(1);
+  };
 
-    const hasWinner = (counter) => (counter == 3);
-    const endGame = (player, sequence) => {
-        uiController.showResult(sequence);
-        gameOver.add();
-    };
+  //
+  // game controllers
+  //
 
-    const verifyResult = () => {
+  const hasWinner = (counter) => (counter === 3);
+  const endGame = (player, sequence) => {
+    uiController.showResult(sequence);
+    gameOver.add();
+  };
 
-        const sequencesToWin = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6]
-        ];
+  const verifyResult = () => {
+    const sequencesToWin = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
 
-        const numberOfPlayers = getAmountOfPlayers();
-        const playerPoints = counterCreator();
-        
-        // Replacing last solution with forEach(), 
-        // only because it was unstoppable! 
-        // Also now I can use only one comparsion for all players.
+    const numberOfPlayers = getAmountOfPlayers();
+    const playerPoints = counterCreator();
 
-        // verify all players
-        for (let i = 0; i < numberOfPlayers; i++) {
+    // Replacing last solution with forEach(),
+    // only because it was unstoppable!
+    // Also now I can use only one comparsion for all players.
 
-            // verify all possible sequences to win
-            for (let sequencePosition = 0; sequencePosition < sequencesToWin.length; sequencePosition++) {
-                const sequence = sequencesToWin[sequencePosition];
+    // verify all players
+    for (let i = 0; i < numberOfPlayers; i += 1) {
+      // verify all possible sequences to win
 
-                // verify each position of each sequence
-                for (let eachPos = 0; eachPos < sequence.length; eachPos++) {
-                    const pos = sequence[eachPos];
-                
-                    if (gameBoard.getPosition(pos) == getPlayer(i).getSign()) playerPoints.add();
-                    if (hasWinner(playerPoints.getCounter())) return sequence;
-                };
-                playerPoints.reset();
-            };
-        };
-        return false;
-    };
+      // eslint-disable-next-line max-len
+      for (let sequencePosition = 0; sequencePosition < sequencesToWin.length; sequencePosition += 1) {
+        const sequence = sequencesToWin[sequencePosition];
 
-    const reset = () => {
-        turnCounter.reset();
-        gameBoard.reset();
-        gameOver.reset();
-        movesCounter.reset();
-        uiController.showTurn(turnCounter.getCounter());
-    };
+        // verify each position of each sequence
+        for (let eachPos = 0; eachPos < sequence.length; eachPos += 1) {
+          const pos = sequence[eachPos];
 
-    //
-    // plays controllers
-    //
+          if (gameBoard.getPosition(pos) === getPlayer(i).getSign()) playerPoints.add();
+          if (hasWinner(playerPoints.getCounter())) return sequence;
+        }
+        playerPoints.reset();
+      }
+    }
+    return false;
+  };
 
-    const getAmountOfPlays = () => gameBoard.get().reduce((obj, sign) => {
-        if (!obj[sign]) obj[sign] = 0;
-        
-        obj[sign]++;
-        return obj;
-    }, {});
+  const reset = () => {
+    turnCounter.reset();
+    gameBoard.reset();
+    gameOver.reset();
+    movesCounter.reset();
+    uiController.showTurn(turnCounter.getCounter());
+  };
 
-    const isAllPlayersPlayed = () => {
-        const numberOfMoves = getAmountOfPlays();
+  //
+  // plays controllers
+  //
 
-        return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()]);
-    };
+  const getAmountOfPlays = () => gameBoard.get().reduce((obj, sign) => {
+    // eslint-disable-next-line no-param-reassign
 
-    const isGameOver = () => (gameOver.getCounter() > 0);         
+    if (!obj[sign]) { obj[sign] = 0; }
 
-    const changeTurnCounter = (isFieldEmpty) => {
+    // eslint-disable-next-line no-param-reassign
+    obj[sign] += 1;
+    return obj;
+  }, {});
 
-        // turn counter
-        if (isAllPlayersPlayed() && isFieldEmpty) {
-            turnCounter.add();
-            uiController.showTurn(turnCounter.getCounter());
-        };
+  const isAllPlayersPlayed = () => {
+    const numberOfMoves = getAmountOfPlays();
 
+    // eslint-disable-next-line max-len
+    return (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(getAmountOfPlayers() - 1).getSign()]);
+  };
 
-    };
+  const isGameOver = () => (gameOver.getCounter() > 0);
 
-    // game loop every play
-    const play = (pos) => {
-        // Set all changes after every move on the game
+  const changeTurnCounter = (isFieldEmpty) => {
+    // turn counter
+    if (isAllPlayersPlayed() && isFieldEmpty) {
+      turnCounter.add();
+      uiController.showTurn(turnCounter.getCounter());
+    }
+  };
 
-        const isFieldEmpty = gameBoard.isEmpty(pos);
-        const player = getPlayerToMove();
+  // game loop every play
+  const play = (pos) => {
+    // Set all changes after every move on the game
 
-        // Verify if game is over
-        //If game is over, stop execution
-        if(isGameOver()) return;
-        
-        // if is not over, continue game
-        // if isn't empty, stop, else cotinue play
-        if (!isFieldEmpty) {
-            return
-        } else {
-            // make move
-            player.setMove(pos);
-            // count movements to set a Draw
-            movesCounter.add();
-            // show movement on display
-            uiController.showMoviment(pos, player.getSign());
-        };
-        
-        
-        // Verify result the game after move;
-        const winnerCombination = verifyResult();
-        
-        // If it's false, change turnCounter and stop play
-        // It has the winner combinetion positions and endGame.
+    const isFieldEmpty = gameBoard.isEmpty(pos);
+    const player = getPlayerToMove();
 
-        if(!winnerCombination){
-            changeTurnCounter(isFieldEmpty);
-            return;
-        } else endGame(player, winnerCombination);
-       
-          
-    };
+    // Verify if game is over
+    // If game is over, stop execution
+    if (isGameOver()) return;
 
-    return {
-        turnCounter,
-        play,
-        reset,
-        createPlayer
-    };
+    // if is not over, continue game
+    // if isn't empty, stop, else cotinue play
+    if (!isFieldEmpty) {
+      return;
+    }
+    // make move
+    player.setMove(pos);
+    // count movements to set a Draw
+    movesCounter.add();
+    // show movement on display
+    uiController.showMoviment(pos, player.getSign());
+
+    // Verify result the game after move;
+    const winnerCombination = verifyResult();
+
+    // If it's false, change turnCounter and stop play
+    // It has the winner combinetion positions and endGame.
+
+    if (!winnerCombination) {
+      changeTurnCounter(isFieldEmpty);
+    } else endGame(player, winnerCombination);
+  };
+
+  return {
+    turnCounter,
+    play,
+    reset,
+    createPlayer,
+  };
 })();
-
 
 //
 //  UI CONTROLLER
 //
 
 export const uiController = (() => {
+  function playAudio(attr) {
+    const toPlay = document.querySelector(`audio[data-sound="${attr}"]`);
 
-    function playAudio(attr) {
-        const toPlay = document.querySelector(`audio[data-sound="${attr}"]`);
-        
-        if (!toPlay) return;
-        
-        toPlay.currentTime = 0;
-        toPlay.play();
-    };
+    if (!toPlay) return;
 
-    const showMoviment = (field, sign) => {
-        const div = document.querySelector(`[data-field="${field}"]`);
-        div.textContent = sign;
-        div.classList.add('selected');
-    };
+    toPlay.currentTime = 0;
+    toPlay.play();
+  }
 
-    const showTurn = (turn) => {
-        const turnSpan = document.querySelector('#turnCounter');
-        turnSpan.textContent = turn;
-    };
+  const showMoviment = (field, sign) => {
+    const div = document.querySelector(`[data-field="${field}"]`);
+    div.textContent = sign;
+    div.classList.add('selected');
+  };
 
-    const showResult = (results) => {
-        const fields = Array.from(document.querySelectorAll('.screen>div'));
+  const showTurn = (turn) => {
+    const turnSpan = document.querySelector('#turnCounter');
+    turnSpan.textContent = turn;
+  };
 
-       
-        for(let i=0; i < fields.length; i++){
-            
-            if(results.includes(Number(fields[i].getAttribute('data-field')))){
-                fields[i].classList.add('winner', 'selected');
-            } else fields[i].classList.add('looser', 'selected');   
-        }; 
-    };
+  const showResult = (results) => {
+    const fields = Array.from(document.querySelectorAll('.screen>div'));
 
-    function selectedField(e){
-        const attr = e.target.getAttribute('data-sound');
-        const fieldSelected = e.target.getAttribute('data-field');
-        controller.play(fieldSelected);
-        playAudio(attr);
-    };
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < fields.length; i++) {
+      if (results.includes(Number(fields[i].getAttribute('data-field')))) {
+        fields[i].classList.add('winner', 'selected');
+      } else fields[i].classList.add('looser', 'selected');
+    }
+  };
 
-    const resetGame = () => {
-        const fields = Array.from(document.querySelectorAll('.screen>div'));
+  function selectedField(e) {
+    const attr = e.target.getAttribute('data-sound');
+    const fieldSelected = e.target.getAttribute('data-field');
+    controller.play(fieldSelected);
+    playAudio(attr);
+  }
 
-        controller.reset();
-        fields.forEach(field => field.textContent = '');
-        fields.forEach(field => field.classList.remove('winner', 'looser', 'selected'));
-    };
-    
-    return { showMoviment, showTurn, showResult, selectedField, resetGame };
+  const resetGame = () => {
+    const fields = Array.from(document.querySelectorAll('.screen>div'));
 
+    controller.reset();
+    // eslint-disable-next-line no-return-assign
+    fields.forEach((field) => field.textContent = '');
+    fields.forEach((field) => field.classList.remove('winner', 'looser', 'selected'));
+  };
+
+  return {
+    showMoviment, showTurn, showResult, selectedField, resetGame,
+  };
 })();

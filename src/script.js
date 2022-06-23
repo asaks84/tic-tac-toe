@@ -1,60 +1,56 @@
-import "./style.scss";
-import { uiController, controller } from "./core.js";
-
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable guard-for-in */
+import './style.scss';
+import { uiController, controller } from './core';
 
 const createDsiplay = (() => {
+  function setFields() {
+    // create the field
+    const screenFields = document.querySelector('div.screen');
 
-    function setFields(){
+    for (let i = 0; i < 9; i += 1) {
+      const divField = document.createElement('div');
 
-        // create the field
-        const screenFields = document.querySelector('div.screen');
+      // class="flex" data-sound="click" data-field="0"
+      divField.classList.add('flex');
+      divField.setAttribute('data-sound', 'click');
+      divField.setAttribute('data-field', i);
+      divField.addEventListener('click', uiController.selectedField);
+      screenFields.appendChild(divField);
+    }
+  }
 
-        for (let i = 0; i < 9; i++) {
-            const divField = document.createElement('div');
+  function setButtons() {
+    const controls = document.querySelector('div.control');
+    const buttons = { Reset: uiController.resetGame };
 
-            // class="flex" data-sound="click" data-field="0"
-            divField.classList.add('flex');
-            divField.setAttribute('data-sound', 'click');
-            divField.setAttribute('data-field', i);
-            divField.addEventListener('click', uiController.selectedField);
-            screenFields.appendChild(divField);
-        };
+    // create button controls
+    // div.control
 
-    };
+    for (const key in buttons) {
+      const newButton = document.createElement('button');
+      const div = document.createElement('div');
+      newButton.classList.add('btn');
+      newButton.addEventListener('click', buttons[key]);
+      newButton.textContent = Object.prototype;
+      div.appendChild(newButton);
+      controls.appendChild(div);
+    }
+  }
 
-    function setButtons() {
-        const controls = document.querySelector('div.control')
-        const buttons = { 'Reset': uiController.resetGame }
-
-        // create button controls
-        // div.control
-        for (const key in buttons) {
-            const newButton = document.createElement('button');
-            const div = document.createElement('div');
-            newButton.classList.add('btn');
-            newButton.addEventListener('click', buttons[key]);
-            newButton.textContent = key
-            div.appendChild(newButton)
-            controls.appendChild(div);
-        };
-
-    };
-
-    return {setFields, setButtons}
-
+  return { setFields, setButtons };
 })();
 
-(function startGame(){
-    //create display
-    createDsiplay.setFields();
-    createDsiplay.setButtons()
+(function startGame() {
+  // create display
+  createDsiplay.setFields();
+  createDsiplay.setButtons();
 
-    // create new players
-    // start with presetted players
-    controller.createPlayer('P1', "X");
-    controller.createPlayer('P2', "O");
+  // create new players
+  // start with presetted players
+  controller.createPlayer('P1', 'X');
+  controller.createPlayer('P2', 'O');
 
-    // start first turn
-    uiController.showTurn(controller.turnCounter.getCounter())
-
-})();
+  // start first turn
+  uiController.showTurn(controller.turnCounter.getCounter());
+}());
