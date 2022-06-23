@@ -142,11 +142,8 @@ export const controller = (() => {
   //
 
   const getAmountOfPlays = () => gameBoard.get().reduce((obj, sign) => {
-    // eslint-disable-next-line no-param-reassign
-
     if (!obj[sign]) { obj[sign] = 0; }
 
-    // eslint-disable-next-line no-param-reassign
     obj[sign] += 1;
     return obj;
   }, {});
