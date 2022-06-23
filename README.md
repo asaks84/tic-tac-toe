@@ -8,6 +8,8 @@ A simple Tic Tac Toe game, for practice factory functions and module patterns.
   
 ### Things I used
 
+All things below is what I've learned and put it practice on this project.
+
 #### SASS
 
 -  **@mixin** (to create responsive elements).
@@ -21,8 +23,9 @@ A simple Tic Tac Toe game, for practice factory functions and module patterns.
 
 #### npm
  -  **Webpack** Bundler
- - **@mdi** font
+ - **@mdi font**
  - **normalizer.css**
+ - **eslint** with Airbnb style guide.
   
 <hr>
 
