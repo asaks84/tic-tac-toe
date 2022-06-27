@@ -71,5 +71,6 @@ const createDsiplay = (() => {
   controller.createPlayer('P2', 'O');
 
   // start first turn
+  uiController.getFields();
   uiController.showTurn(controller.turnCounter.getCounter());
 }());

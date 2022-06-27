@@ -42,11 +42,11 @@ const Player = (name, sign) => {
 //
 
 export const controller = (() => {
+  const players = [];
+
   const turnCounter = counterCreator(1);
   const gameOver = counterCreator();
   const movesCounter = counterCreator();
-
-  const players = [];
 
   //
   // players controllers
@@ -72,9 +72,11 @@ export const controller = (() => {
 
     if (Object.keys(numberOfMoves).length === 0) {
       return getPlayer(0);
-    } if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
+    }
+    if (numberOfMoves[getPlayer(0).getSign()] <= numberOfMoves[getPlayer(1).getSign()]) {
       return getPlayer(0);
-    } return getPlayer(1);
+    }
+    return getPlayer(1);
   };
 
   //
@@ -82,6 +84,8 @@ export const controller = (() => {
   //
 
   const hasWinner = (counter) => (counter === 3);
+
+  // End-game Loop
   const endGame = (player, sequence) => {
     uiController.showResult(sequence);
     gameOver.add();
@@ -131,7 +135,6 @@ export const controller = (() => {
     gameBoard.reset();
     gameOver.reset();
     movesCounter.reset();
-    uiController.showTurn(turnCounter.getCounter());
   };
 
   //
@@ -158,7 +161,6 @@ export const controller = (() => {
     // turn counter
     if (isAllPlayersPlayed() && isFieldEmpty) {
       turnCounter.add();
-      uiController.showTurn(turnCounter.getCounter());
     }
   };
 
@@ -193,6 +195,7 @@ export const controller = (() => {
 
     if (!winnerCombination) {
       changeTurnCounter(isFieldEmpty);
+      uiController.showTurn(turnCounter.getCounter());
     } else endGame(player, winnerCombination);
   };
 
@@ -209,6 +212,12 @@ export const controller = (() => {
 //
 
 export const uiController = (() => {
+  const fields = [];
+
+  const getFields = () => {
+    Array.from(document.querySelectorAll('.screen>div')).forEach((field) => fields.push(field));
+  };
+
   function playAudio(attr) {
     const toPlay = document.querySelector(`audio[data-sound="${attr}"]`);
 
@@ -230,8 +239,6 @@ export const uiController = (() => {
   };
 
   const showResult = (results) => {
-    const fields = Array.from(document.querySelectorAll('.screen>div'));
-
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < fields.length; i++) {
       if (results.includes(Number(fields[i].getAttribute('data-field')))) {
@@ -247,16 +254,18 @@ export const uiController = (() => {
     playAudio(attr);
   }
 
-  const resetGame = () => {
-    const fields = Array.from(document.querySelectorAll('.screen>div'));
+  const resetFields = (field) => {
+    field.textContent = '';
+    field.classList.remove('winner', 'looser', 'selected');
+  };
 
+  const resetGame = () => {
     controller.reset();
-    // eslint-disable-next-line no-return-assign
-    fields.forEach((field) => field.textContent = '');
-    fields.forEach((field) => field.classList.remove('winner', 'looser', 'selected'));
+    showTurn(controller.turnCounter.getCounter());
+    fields.forEach((field) => resetFields(field));
   };
 
   return {
-    showMoviment, showTurn, showResult, selectedField, resetGame,
+    showMoviment, showTurn, showResult, selectedField, resetGame, getFields, fields,
   };
 })();
