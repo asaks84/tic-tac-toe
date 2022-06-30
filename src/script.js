@@ -31,8 +31,9 @@ const createDsiplay = (() => {
     // div.control
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const obj in buttons) {
-      /*
+    for (const obj of buttons) {
+      /*  FOR...IN iteration
+
         Using if verification here due to not getting obj from 'buttons' prototype.
         this is not necessary for now because the prototype is Array,
         and this means it's an empty array.
@@ -43,17 +44,19 @@ const createDsiplay = (() => {
         Using it to remember why I have to use it.
 
         Even if it's not an object, it works fine.
+
+        EDIT: using for...of because it's an array
+        and it don't need to use a if verification because I'm not
+        working with objects.
       */
 
-      if (Array.prototype.hasOwnProperty.call(buttons, obj)) {
-        const newButton = document.createElement('button');
-        const div = document.createElement('div');
-        newButton.classList.add('btn');
-        newButton.addEventListener('click', buttons[obj].Function);
-        newButton.textContent = buttons[obj].Name;
-        div.appendChild(newButton);
-        controls.appendChild(div);
-      }
+      const newButton = document.createElement('button');
+      const div = document.createElement('div');
+      newButton.classList.add('btn');
+      newButton.addEventListener('click', obj.Function);
+      newButton.textContent = obj.Name;
+      div.appendChild(newButton);
+      controls.appendChild(div);
     }
   }
 
